@@ -41,7 +41,7 @@ const BestsellerList = () => {
   return (
     <div className="w-full mx-auto">
       <div className="text-center mx-auto">
-        <h1 className="text-3xl font-bold text-gray-700 py-6">베스트셀러</h1>
+        <h1 className="text-3xl font-bold text-gray-700 py-6">추천 도서</h1>
       </div>
       <Swiper
         slidesPerView={5}
