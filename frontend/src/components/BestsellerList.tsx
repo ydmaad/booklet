@@ -1,17 +1,18 @@
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { useEffect } from "react";
-import BestsellerItem from "./BestsellerItem";
 import {
   fetchBooksFailure,
   fetchBooksStart,
   fetchBooksSuccess,
 } from "../store/slices/booksSlice";
 import axios from "axios";
+import BookItem from "./BookItem";
 
 const BestsellerList = () => {
   const books = useAppSelector((state) => state.books);
   const dispatch = useAppDispatch();
-  console.log("books 상태:", books);
+  const bestseller = books.items.item;
+
   useEffect(() => {
     dispatch(fetchBooksStart());
     const fetchBooks = async () => {
@@ -31,7 +32,11 @@ const BestsellerList = () => {
   }, []);
   return (
     <div>
-      <BestsellerItem />
+      {bestseller.map((book) => (
+        <div key={book.isbn13}>
+          <BookItem book={book} />
+        </div>
+      ))}
     </div>
   );
 };
