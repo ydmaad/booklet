@@ -8,8 +8,15 @@ export interface Book {
   publisher: string;
 }
 
+export interface AladinResponse {
+  version: string;
+  logo: string;
+  title: string;
+  item: Book[];
+}
+
 export interface BooksState {
-  items: Book[];
+  items: AladinResponse;
   loading: boolean;
   error: string | null;
 }
