@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import MainPage from "./pages/MainPage";
 import MyPage from "./pages/MyPage";
 import IsbnInputPage from "./pages/IsbnInputPage";
+import MyReviewPage from "./pages/MyReviewPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/barcode" element={<BarcodeScanPage />} />
         <Route path="/isbn" element={<IsbnInputPage />} />
+        <Route path="/my-review/:isbn" element={<MyReviewPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
