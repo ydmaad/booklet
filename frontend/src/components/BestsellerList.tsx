@@ -7,6 +7,14 @@ import {
 } from "../store/slices/booksSlice";
 import axios from "axios";
 import BookItem from "./BookItem";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+// @ts-expect-error - Swiper CSS import type issue
+import "swiper/css";
+// @ts-expect-error - Swiper Navigation CSS
+import "swiper/css/navigation";
+// @ts-expect-error - Swiper Pagination CSS
+import "swiper/css/pagination";
 
 const BestsellerList = () => {
   const books = useAppSelector((state) => state.books);
@@ -31,12 +39,24 @@ const BestsellerList = () => {
     fetchBooks();
   }, []);
   return (
-    <div>
-      {bestseller.map((book) => (
-        <div key={book.isbn13}>
-          <BookItem book={book} />
-        </div>
-      ))}
+    <div className="w-full mx-auto">
+      <div className="text-center mx-auto">
+        <h1 className="text-3xl font-bold text-gray-700 py-6">베스트셀러</h1>
+      </div>
+      <Swiper
+        slidesPerView={5}
+        spaceBetween={100}
+        loop={true}
+        navigation={true}
+        modules={[Navigation]}
+        className="w-[1200px]"
+      >
+        {bestseller.map((book) => (
+          <SwiperSlide key={book.isbn13}>
+            <BookItem book={book} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </div>
   );
 };
