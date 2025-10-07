@@ -1,5 +1,3 @@
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import MyReviewList from "../components/MyReviewList";
 import BestsellerList from "../components/BestsellerList";
 import { Link } from "react-router-dom";
@@ -7,7 +5,6 @@ import { Link } from "react-router-dom";
 const MainPage = () => {
   return (
     <div>
-      <Header />
       <Link
         to="/barcode"
         className="bg-indigo-500 text-white px-4 py-2 rounded-lg shadow-lg shadow-indigo-500/50 hover:bg-indigo-600 transition-colors duration-200"
@@ -16,7 +13,6 @@ const MainPage = () => {
       </Link>
       <MyReviewList />
       <BestsellerList />
-      <Footer />
     </div>
   );
 };

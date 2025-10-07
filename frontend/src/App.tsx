@@ -6,10 +6,13 @@ import MainPage from "./pages/MainPage";
 import MyPage from "./pages/MyPage";
 import IsbnInputPage from "./pages/IsbnInputPage";
 import MyReviewPage from "./pages/MyReviewPage";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 function App() {
   return (
-    <div className="px-32">
+    <div className="max-w-[1200px] mx-auto">
+      <Header />
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/mypage" element={<MyPage />} />
@@ -19,6 +22,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
+      <Footer />
     </div>
   );
 }
