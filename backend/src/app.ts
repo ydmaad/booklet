@@ -50,6 +50,32 @@ app.get("/api/books/list", async (req: Request, res: Response) => {
   }
 });
 
+// ISBN으로 책 정보 검색 API
+app.get("/api/books/isbn/:isbn", async (req: Request, res: Response) => {
+  try {
+    const { isbn } = req.params;
+
+    const response = await axios.get(
+      "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx",
+      {
+        params: {
+          ttbkey: process.env.TTB_KEY,
+          itemIdType: "ISBN13",
+          ItemId: isbn,
+          output: "js",
+          Version: "20131101",
+          OptResult: "ebookList,usedList,reviewList",
+        },
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    console.log("알라딘 책 검색 API 에러", error);
+    res.status(500).json({ error: "책 정보를 가져오는데 실패했습니다." });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`서버 실행: http://localhost:${PORT}`);
 });
