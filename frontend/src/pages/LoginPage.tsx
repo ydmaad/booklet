@@ -1,7 +1,8 @@
+// src/pages/LoginPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { login, clearError } from '../store/authSlice';
+import { login, clearError } from '../store/slices/authSlice';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -95,6 +96,13 @@ const LoginPage: React.FC = () => {
                 {error}
               </div>
             )}
+
+            {/* 비밀번호 찾기 링크 */}
+            <div className="text-right">
+              <Link to="/password-reset" className="text-sm text-gray-600 hover:text-gray-900">
+                비밀번호를 잊으셨나요?
+              </Link>
+            </div>
 
             {/* 로그인 버튼 */}
             <button
