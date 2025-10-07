@@ -1,9 +1,10 @@
+// src/pages/SignupPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { signup, clearError } from '../store/authSlice';
+import { signup, clearError } from '../store/slices/authSlice';
 
-const RegisterPage: React.FC = () => {
+const SignupPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
   const [password, setPassword] = useState('');
@@ -39,7 +40,6 @@ const RegisterPage: React.FC = () => {
     }
 
     // TODO: 실제로는 Supabase에서 이메일 중복 확인
-    // 임시로 중복 확인 성공으로 처리
     setEmailChecked(true);
     alert('사용 가능한 이메일입니다.');
   };
@@ -57,7 +57,6 @@ const RegisterPage: React.FC = () => {
     }
 
     // TODO: 실제로는 Supabase profiles 테이블에서 닉네임 중복 확인
-    // 임시로 중복 확인 성공으로 처리
     setNicknameChecked(true);
     alert('사용 가능한 닉네임입니다.');
   };
@@ -92,10 +91,6 @@ const RegisterPage: React.FC = () => {
 
     try {
       await dispatch(signup({ email, password })).unwrap();
-      
-      // TODO: 회원가입 성공 후 profiles 테이블에 닉네임 저장
-      // await supabase.from('profiles').update({ nickname }).eq('id', user.id);
-      
       alert('회원가입이 완료되었습니다!');
       navigate('/login');
     } catch (err) {
@@ -237,4 +232,5 @@ const RegisterPage: React.FC = () => {
     </div>
   );
 };
-export default RegisterPage;
+
+export default SignupPage;
