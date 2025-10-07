@@ -2,7 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { BooksState } from "../../types/book.types";
 
 const initialState: BooksState = {
-  items: [],
+  items: {
+    version: "",
+    logo: "",
+    title: "",
+    item: [],
+  },
   loading: false,
   error: null,
 };
