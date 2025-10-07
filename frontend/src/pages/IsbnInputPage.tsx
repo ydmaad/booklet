@@ -4,6 +4,15 @@ import { Link } from "react-router-dom";
 
 const IsbnInputPage = () => {
   const [isbn, setIsbn] = useState("");
+
+  const handleSearchClick = (e: React.MouseEvent) => {
+    if (isbn.trim() === "") {
+      e.preventDefault();
+      alert("올바른 번호를 입력해주세요.");
+      return;
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-start min-h-screen pt-28 space-y-12">
       <div className="flex flex-col items-center justify-center space-y-4">
@@ -25,13 +34,14 @@ const IsbnInputPage = () => {
       </div>
       <div className="flex flex-col space-y-3">
         <Link
-          to="/isbn"
+          to={`/my-review/${isbn}`}
+          onClick={handleSearchClick}
           className="bg-indigo-500 text-white text-xl text-center w-[400px] py-3 rounded-lg shadow-lg shadow-indigo-500/50 hover:bg-indigo-600 transition-colors duration-200"
         >
           책 찾기
         </Link>{" "}
         <Link
-          to={`/my-review/${isbn}`}
+          to="/"
           className="bg-indigo-200 text-gray-600 text-xl text-center w-[400px] py-3 rounded-lg shadow-lg shadow-indigo-500/50 hover:bg-indigo-300 transition-colors duration-200"
         >
           취소
