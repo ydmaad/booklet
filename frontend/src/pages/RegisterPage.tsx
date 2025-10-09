@@ -1,29 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { signup, clearError } from '../store/slices/authSlice';
+import { register } from '../store/slices/authSlice';
+import { supabase } from '../lib/supabaseClient';
 
-const SignupPage: React.FC = () => {
+const RegisterPage: React.FC = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { user, loading, error } = useAppSelector((state) => state.auth);
+
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [emailChecked, setEmailChecked] = useState(false);
-  const [nicknameChecked, setNicknameChecked] = useState(false);
-  
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { loading, error, user } = useAppSelector((state) => state.auth);
+  const [validationError, setValidationError] = useState('');
 
+  // 이미 로그인된 경우 홈으로 리다이렉트
   useEffect(() => {
     if (user) {
       navigate('/');
     }
   }, [user, navigate]);
-
-  useEffect(() => {
-    dispatch(clearError());
-  }, [dispatch]);
 
   // 이메일 중복 확인
   const handleEmailCheck = async () => {
@@ -38,9 +35,27 @@ const SignupPage: React.FC = () => {
       return;
     }
 
-    // TODO: 실제로는 Supabase에서 이메일 중복 확인
-    setEmailChecked(true);
-    alert('사용 가능한 이메일입니다.');
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+
+      if (data) {
+        setValidationError('이미 사용 중인 이메일입니다.');
+      } else {
+        setValidationError('');
+        alert('사용 가능한 이메일입니다.');
+      }
+    } catch (err: any) {
+      console.error('이메일 중복 확인 오류:', err);
+      setValidationError('이메일 확인 중 오류가 발생했습니다.');
+    }
   };
 
   // 닉네임 중복 확인
@@ -55,71 +70,84 @@ const SignupPage: React.FC = () => {
       return;
     }
 
-    // TODO: 실제로는 Supabase profiles 테이블에서 닉네임 중복 확인
-    setNicknameChecked(true);
-    alert('사용 가능한 닉네임입니다.');
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('nickname')
+        .eq('nickname', nickname)
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+
+      if (data) {
+        setValidationError('이미 사용 중인 닉네임입니다.');
+      } else {
+        setValidationError('');
+        alert('사용 가능한 닉네임입니다.');
+      }
+    } catch (err: any) {
+      console.error('닉네임 중복 확인 오류:', err);
+      setValidationError('닉네임 확인 중 오류가 발생했습니다.');
+    }
   };
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError('');
 
+    // 유효성 검사
     if (!email || !nickname || !password || !confirmPassword) {
-      alert('모든 필드를 입력해주세요.');
+      setValidationError('모든 필드를 입력해주세요.');
       return;
     }
 
-    if (!emailChecked) {
-      alert('이메일 중복 확인을 해주세요.');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setValidationError('올바른 이메일 형식이 아닙니다.');
       return;
     }
 
-    if (!nicknameChecked) {
-      alert('닉네임 중복 확인을 해주세요.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      alert('비밀번호가 일치하지 않습니다.');
+    if (nickname.length < 2 || nickname.length > 20) {
+      setValidationError('닉네임은 2~20자 사이여야 합니다.');
       return;
     }
 
     if (password.length < 6) {
-      alert('비밀번호는 최소 6자 이상이어야 합니다.');
+      setValidationError('비밀번호는 최소 6자 이상이어야 합니다.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setValidationError('비밀번호가 일치하지 않습니다.');
       return;
     }
 
     try {
-      await dispatch(signup({ email, password })).unwrap();
-      alert('회원가입이 완료되었습니다!');
-      navigate('/login');
-    } catch (err) {
-      console.error('회원가입 실패:', err);
+      const result = await dispatch(
+        register({ email, password, nickname })
+      ).unwrap();
+
+      if (result) {
+        alert('회원가입이 완료되었습니다!');
+        navigate('/');
+      }
+    } catch (err: any) {
+      console.error('회원가입 오류:', err);
     }
   };
 
-  // 이메일이 변경되면 중복 확인 상태 초기화
-  useEffect(() => {
-    setEmailChecked(false);
-  }, [email]);
-
-  // 닉네임이 변경되면 중복 확인 상태 초기화
-  useEffect(() => {
-    setNicknameChecked(false);
-  }, [nickname]);
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-
-      {/* 메인 콘텐츠 */}
-      <main className="flex-1 flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-md">
-          <h2 className="text-3xl font-bold text-center mb-12">회원가입</h2>
-
-          <form onSubmit={handleSignup} className="space-y-5">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        {/* 폼 */}
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4">
             {/* 이메일 입력 + 중복 확인 */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                이메일 주소
+                이메일
               </label>
               <div className="flex gap-2">
                 <input
@@ -127,7 +155,7 @@ const SignupPage: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Value"
+                  placeholder="example@email.com"
                   className="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent"
                   disabled={loading}
                 />
@@ -152,7 +180,7 @@ const SignupPage: React.FC = () => {
                   type="text"
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
-                  placeholder="Value"
+                  placeholder="2~20자 사이"
                   className="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent"
                   disabled={loading}
                 />
@@ -176,7 +204,7 @@ const SignupPage: React.FC = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Value"
+                placeholder="최소 6자 이상"
                 className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent"
                 disabled={loading}
               />
@@ -192,32 +220,44 @@ const SignupPage: React.FC = () => {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Value"
+                placeholder="비밀번호를 다시 입력하세요"
                 className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent"
                 disabled={loading}
               />
             </div>
+          </div>
 
-            {/* 에러 메시지 */}
-            {error && (
-              <div className="bg-red-50 text-red-600 px-4 py-3 rounded text-sm">
-                {error}
-              </div>
-            )}
+          {/* 에러 메시지 */}
+          {(validationError || error) && (
+            <div className="text-red-600 text-sm text-center bg-red-50 py-2 px-4 rounded">
+              {validationError || error}
+            </div>
+          )}
 
-            {/* 회원가입 버튼 */}
+          {/* 회원가입 버튼 */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 px-4 bg-gray-900 text-white rounded hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {loading ? '처리 중...' : '회원가입'}
+          </button>
+
+          {/* 로그인 링크 */}
+          <div className="text-center text-sm">
+            <span className="text-gray-600">이미 계정이 있으신가요? </span>
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gray-900 text-white py-3 rounded font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-8"
+              type="button"
+              onClick={() => navigate('/login')}
+              className="text-gray-900 font-medium hover:underline"
             >
-              {loading ? '처리 중...' : '회원가입'}
+              로그인하기
             </button>
-          </form>
-        </div>
-      </main>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default SignupPage;
+export default RegisterPage;
