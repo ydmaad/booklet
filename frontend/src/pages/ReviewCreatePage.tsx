@@ -6,7 +6,7 @@ import type { AladinResponse } from "../types/book.types";
 
 type ReadStatus = "읽고 싶은" | "읽는 중" | "읽음" | "잠시 멈춤" | "중단" | "";
 
-const MyReviewPage = () => {
+const ReviewCreatePage = () => {
   const { isbn } = useParams();
   const [bookInfo, setBookInfo] = useState<AladinResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -147,4 +147,4 @@ const MyReviewPage = () => {
   );
 };
 
-export default MyReviewPage;
+export default ReviewCreatePage;
