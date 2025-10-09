@@ -1,6 +1,5 @@
-// src/pages/SignupPage.tsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { signup, clearError } from '../store/slices/authSlice';
 
@@ -110,18 +109,6 @@ const SignupPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* 헤더 */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold">별책부록</h1>
-        <div className="flex gap-4 text-sm">
-          <Link to="/login" className="text-gray-700 hover:text-gray-900">
-            로그인
-          </Link>
-          <Link to="/signup" className="text-gray-700 hover:text-gray-900">
-            회원가입
-          </Link>
-        </div>
-      </header>
 
       {/* 메인 콘텐츠 */}
       <main className="flex-1 flex items-center justify-center px-4 py-8">
