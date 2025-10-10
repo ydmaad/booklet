@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import InputField from "../components/InputField";
 import { IoBookOutline } from "react-icons/io5";
+import type { AladinResponse } from "../types/book.types";
 
 type ReadStatus = "읽고 싶은" | "읽는 중" | "읽음" | "잠시 멈춤" | "중단" | "";
 
-const MyReviewPage = () => {
+const ReviewCreatePage = () => {
   const { isbn } = useParams();
-  const [bookInfo, setBookInfo] = useState(null);
+  const [bookInfo, setBookInfo] = useState<AladinResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -59,7 +60,11 @@ const MyReviewPage = () => {
 
       <div className="flex gap-20 justify-center py-10">
         <div className="w-[350px] h-[500px] border">
-          <img src="" alt="" />
+          <img
+            src={bookInfo?.item?.[0]?.cover}
+            alt=""
+            className="w-full h-full object-contain"
+          />
         </div>
         <div>
           <InputField
@@ -83,8 +88,8 @@ const MyReviewPage = () => {
             value={bookInfo?.item?.[0]?.pubDate}
             placeholder=""
           />
-          <div className="flex flex-row items-center gap-20 mb-5">
-            <p className="text-lg">읽기 상태</p>
+          <div className="flex flex-row items-center gap-10 mb-5">
+            <p className="text-lg w-[120px]">읽기 상태</p>
             <select
               name="readStatus"
               id="readStatus"
@@ -102,8 +107,8 @@ const MyReviewPage = () => {
               <option value="중단">⛔ 중단</option>
             </select>
           </div>
-          <div className="flex flex-row items-center gap-20 mb-5">
-            <p className="text-lg">별점</p>
+          <div className="flex flex-row items-center gap-10 mb-5">
+            <p className="text-lg w-[120px]">별점</p>
             <select
               name="star"
               id="star"
@@ -116,19 +121,30 @@ const MyReviewPage = () => {
               <option value="5">⭐️⭐️⭐️⭐️⭐️</option>
             </select>
           </div>
-          <div className="flex justify-between items-center gap-20 mb-5">
+          <div className="flex justify-between items-start gap-20 mb-5">
             <p className="text-lg">한줄평/메모</p>
             <textarea
               name="memo"
               id="memo"
               placeholder="책을 읽고 느낀 점이나 기억하고 싶은 문장을 적어보세요."
-              className="w-[500px] h-[120px] border rounded-lg p-3 text-base resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-[500px] h-[400px] border rounded-lg p-3 text-base resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
             ></textarea>
           </div>
         </div>
+      </div>
+      <div className="flex flex-row gap-10 items-center justify-center mb-40">
+        <button
+          onClick={() => navigate("/")}
+          className="bg-indigo-200 text-gray-600 text-xl text-center w-[130px] py-3 rounded-lg shadow-lg shadow-indigo-500/50 hover:bg-indigo-300 transition-colors duration-200"
+        >
+          취소
+        </button>
+        <button className="bg-indigo-500 text-white text-xl text-center w-[130px] py-3 rounded-lg shadow-lg shadow-indigo-500/50 hover:bg-indigo-600 transition-colors duration-200">
+          확인
+        </button>
       </div>
     </div>
   );
 };
 
-export default MyReviewPage;
+export default ReviewCreatePage;

@@ -1,11 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
   return (
     <header className="flex justify-between py-5 bg-gray-100">
-      <div className="text-xl font-bold">별책부록</div>
+      <div
+        onClick={() => navigate("/")}
+        className="text-xl font-bold cursor-pointer"
+      >
+        별책부록
+      </div>
 
       {/* 테스트용 버튼 - 나중에 삭제할 거예요! */}
       <button

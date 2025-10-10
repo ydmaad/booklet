@@ -5,9 +5,11 @@ import RegisterPage from "./pages/RegisterPage";
 import MainPage from "./pages/MainPage";
 import MyPage from "./pages/MyPage";
 import IsbnInputPage from "./pages/IsbnInputPage";
-import MyReviewPage from "./pages/MyReviewPage";
+import ReviewCreatePage from "./pages/ReviewCreatePage";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ReviewDetail from "./components/ReviewDetail";
+import EditProfile from "./components/EditProfile";
 
 function App() {
   return (
@@ -16,9 +18,11 @@ function App() {
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/mypage" element={<MyPage />} />
+        <Route path="/mypage/edit" element={<EditProfile />} />
         <Route path="/barcode" element={<BarcodeScanPage />} />
         <Route path="/isbn" element={<IsbnInputPage />} />
-        <Route path="/my-review/:isbn" element={<MyReviewPage />} />
+        <Route path="/my-review/:isbn" element={<ReviewCreatePage />} />
+        <Route path="/review" element={<ReviewDetail />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
