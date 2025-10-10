@@ -12,7 +12,7 @@ const InputField = ({
   onChange,
 }: InputFieldProps) => {
   return (
-    <div className="flex items-center gap-20 mb-5">
+    <div className="flex items-center gap-10 mb-5">
       <p className="text-lg w-[120px]">{label}</p>
       <input
         type="text"

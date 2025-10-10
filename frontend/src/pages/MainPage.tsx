@@ -5,12 +5,15 @@ import { Link } from "react-router-dom";
 const MainPage = () => {
   return (
     <div>
-      <div className="h-[33vh] bg-gradient-to-r from-pink-500 to-yellow-500 flex items-center justify-center">
+      <div className="h-[33vh] bg-[url('/main_hero_4.jpg')] bg-cover flex flex-col items-center justify-center">
+        <p className="text-white text-5xl font-semibold mb-7">
+          내가 읽은 책들을 기록해봐요!
+        </p>
         <Link
           to="/barcode"
           className="bg-indigo-500 text-white px-4 py-2 rounded-lg shadow-lg shadow-indigo-500/50 hover:bg-indigo-600 transition-colors duration-200"
         >
-          바코드 스캔 페이지로 가는 임시 버튼입니다!!
+          기록하러 가기
         </Link>
       </div>
       <MyReviewList />
