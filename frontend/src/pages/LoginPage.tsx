@@ -1,80 +1,74 @@
-// src/pages/LoginPage.tsx
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { login, clearError } from '../store/slices/authSlice';
+import { login } from '../store/slices/authSlice';
 
-const LoginPage: React.FC = () => {
+const LoginPage = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { user, loading, error } = useAppSelector((state) => state.auth);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { loading, error, user } = useAppSelector((state) => state.auth);
+  const [validationError, setValidationError] = useState('');
 
+  // 이미 로그인된 경우 홈으로 리다이렉트
   useEffect(() => {
     if (user) {
       navigate('/');
     }
   }, [user, navigate]);
 
-  useEffect(() => {
-    dispatch(clearError());
-  }, [dispatch]);
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setValidationError('');
+
+    // 유효성 검사
     if (!email || !password) {
-      alert('이메일과 비밀번호를 입력해주세요.');
+      setValidationError('이메일과 비밀번호를 입력해주세요.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setValidationError('올바른 이메일 형식이 아닙니다.');
       return;
     }
 
     try {
-      await dispatch(login({ email, password })).unwrap();
-      navigate('/');
-    } catch (err) {
-      console.error('로그인 실패:', err);
+      const result = await dispatch(login({ email, password })).unwrap();
+
+      if (result) {
+        navigate('/');
+      }
+    } catch (err: any) {
+      console.error('로그인 오류:', err);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* 헤더 */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold">별책부록</h1>
-        <div className="flex gap-4 text-sm">
-          <Link to="/login" className="text-gray-700 hover:text-gray-900">
-            로그인
-          </Link>
-          <Link to="/signup" className="text-gray-700 hover:text-gray-900">
-            회원가입
-          </Link>
-        </div>
-      </header>
-
-      {/* 메인 콘텐츠 */}
-      <main className="flex-1 flex items-center justify-center px-4">
-        <div className="w-full max-w-md">
-          <h2 className="text-3xl font-bold text-center mb-12">로그인</h2>
-
-          <form onSubmit={handleLogin} className="space-y-5">
-            {/* 이메일 주소 */}
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        {/* 폼 */}
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            {/* 이메일 입력 */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                이메일 주소
+                이메일
               </label>
               <input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Value"
+                placeholder="example@email.com"
                 className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent"
                 disabled={loading}
               />
             </div>
 
-            {/* 비밀번호 */}
+            {/* 비밀번호 입력 */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 비밀번호
@@ -84,46 +78,42 @@ const LoginPage: React.FC = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Value"
+                placeholder="비밀번호를 입력하세요"
                 className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent"
                 disabled={loading}
               />
             </div>
+          </div>
 
-            {/* 에러 메시지 */}
-            {error && (
-              <div className="bg-red-50 text-red-600 px-4 py-3 rounded text-sm">
-                {error}
-              </div>
-            )}
-
-            {/* 비밀번호 찾기 링크 */}
-            <div className="text-right">
-              <Link to="/password-reset" className="text-sm text-gray-600 hover:text-gray-900">
-                비밀번호를 잊으셨나요?
-              </Link>
+          {/* 에러 메시지 */}
+          {(validationError || error) && (
+            <div className="text-red-600 text-sm text-center bg-red-50 py-2 px-4 rounded">
+              {validationError || error}
             </div>
+          )}
 
-            {/* 로그인 버튼 */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gray-900 text-white py-3 rounded font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-6"
-            >
-              {loading ? '로그인 중...' : '로그인'}
-            </button>
+          {/* 로그인 버튼 */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 px-4 bg-gray-900 text-white rounded hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {loading ? '처리 중...' : '로그인'}
+          </button>
 
-            {/* 구글 로그인 버튼 */}
+          {/* 회원가입 링크 */}
+          <div className="text-center text-sm">
+            <span className="text-gray-600">아직 계정이 없으신가요? </span>
             <button
               type="button"
               onClick={() => navigate('/signup')}
-              className="w-full bg-white text-gray-900 py-3 rounded font-medium border border-gray-300 hover:bg-gray-50 transition-colors"
+              className="text-gray-900 font-medium hover:underline"
             >
-              구글 로그인
+              회원가입하기
             </button>
-          </form>
-        </div>
-      </main>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
