@@ -39,15 +39,21 @@ const ReviewCreatePage = () => {
         const data = await response.json();
         setBookInfo(data);
         console.log("받아온 책 정보:::", data.item[0]);
-      } catch (err: any) {
-        console.error("api 에러:::", err);
-        setError(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          console.error("api 에러:::", err);
+          setError(err.message);
+        } else {
+          console.error("api 에러:::", err);
+          setError(String(err));
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchBookInfo();
   }, [isbn, navigate]);
+
   return (
     <div>
       <div className="flex flex-col items-center text-center  py-10">
@@ -67,6 +73,9 @@ const ReviewCreatePage = () => {
           />
         </div>
         <div>
+          {/* 에러 / 로딩 표시 */}
+          {loading && <p className="text-blue-500 mb-2">로딩 중...</p>}
+          {error && <p className="text-red-500 mb-2">{error}</p>}
           <InputField
             label="책 제목"
             value={bookInfo?.item?.[0]?.title}
