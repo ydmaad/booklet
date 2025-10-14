@@ -25,7 +25,7 @@ const BestsellerList = () => {
     dispatch(fetchBooksStart());
     const fetchBooks = async () => {
       try {
-        const url = "/api/books/list?queryType=Bestseller";
+        const url = "/api/books-list?queryType=Bestseller";
         const response = await axios.get(url);
         dispatch(fetchBooksSuccess(response.data));
       } catch (error) {
