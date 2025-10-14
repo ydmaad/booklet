@@ -32,9 +32,7 @@ const ReviewCreatePage = () => {
         setLoading(true);
         setError("");
 
-        const response = await fetch(
-          `http://localhost:3000/api/books/isbn/${isbn}`
-        );
+        const response = await fetch(`/api/books/isbn/${isbn}`);
 
         const data = await response.json();
         setBookInfo(data);
