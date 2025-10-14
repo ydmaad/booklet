@@ -1,10 +1,5 @@
 {
   "functions": {
-    "api/books/*.ts": {
-      "runtime": "nodejs20.x"
-    },
-    "api/books/isbn/*.ts": {
-      "runtime": "nodejs20.x"
-    }
+    "api/books/**/*.ts": {}
   }
 }
