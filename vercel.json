@@ -1,13 +1,13 @@
 {
   "functions": {
-    "backend/api/**/*.ts": {
+    "api/**/*.ts": {
       "runtime": "nodejs20.x"
     }
   },
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "/backend/api/:path*"
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
     }
   ]
 }
