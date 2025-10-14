@@ -3,7 +3,12 @@ import axios from "axios";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    const { queryType = "Bestseller", maxResults = 10, start = 1 } = req.query;
+    const {
+      queryType = "Bestseller",
+      maxResults = 10,
+      start = 1,
+      searchTarget = "Book",
+    } = req.query;
 
     const response = await axios.get(
       "http://www.aladin.co.kr/ttb/api/ItemList.aspx",
@@ -11,6 +16,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         params: {
           ttbkey: process.env.TTB_KEY,
           QueryType: queryType,
+          SearchTarget: searchTarget,
           MaxResults: maxResults,
           start,
           output: "js",
