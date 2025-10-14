@@ -1,25 +1,13 @@
 {
   "functions": {
     "backend/api/**/*.ts": {
-      "runtime": "nodejs20.x",
-      "memory": 512
+      "runtime": "nodejs20.x"
     }
   },
-  "builds": [
+  "rewrites": [
     {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/backend/api/$1.ts"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/dist/$1"
+      "source": "/api/:path*",
+      "destination": "/backend/api/:path*"
     }
   ]
 }
