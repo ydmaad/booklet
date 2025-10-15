@@ -12,7 +12,7 @@ const MainPage = () => {
         className="h-[33vh] bg-cover flex flex-col items-center justify-center"
         style={{ backgroundImage: `url('${selectedBG}')` }}
       >
-        <p className="text-white text-5xl font-semibold mb-7">
+        <p className="[text-shadow:_2px_2px_8px_rgba(0,0,0,0.6)] text-white  text-5xl font-semibold mb-7">
           내가 읽은 책들을 기록해봐요!
         </p>
         <Link
