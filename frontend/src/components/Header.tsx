@@ -1,9 +1,21 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../store/slices/authSlice';
+import type { RootState, AppDispatch } from '../store/store';
 
 const Header = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
+  // Redux에서 프로필 정보 가져오기
+  const { profile, user } = useSelector((state: RootState) => state.auth);
+
+  const handleLogout = async () => {
+    await dispatch(logout());
+    navigate('/');
+  };
+
   return (
     <header className="flex justify-between py-5 bg-gray-100">
       <div
@@ -13,22 +25,14 @@ const Header = () => {
         별책부록
       </div>
 
-      {/* 테스트용 버튼 - 나중에 삭제할 거예요! */}
-      <button
-        onClick={() => setIsLoggedIn(!isLoggedIn)}
-        className="bg-yellow-400 px-3 py-1 rounded text-sm"
-      >
-        {isLoggedIn ? "로그아웃 테스트" : "로그인 테스트"}
-      </button>
-
       <nav className="flex flex-row gap-3">
-        {isLoggedIn ? (
+        {user ? (
           <>
-            <span className="text-lg">닉네임님</span>
+            <span className="text-lg">{profile?.nickname} 님</span>
             <Link to="/mypage" className="text-lg">
               마이페이지
             </Link>
-            <button className="text-lg">로그아웃</button>
+            <button onClick={handleLogout} className="text-lg">로그아웃</button>
           </>
         ) : (
           <>
