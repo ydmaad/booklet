@@ -1,20 +1,48 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import { 
+  persistStore, 
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage'; // localStorage 사용
 import booksReducer from "./slices/booksSlice";
 import authReducer from './slices/authSlice';
 
+// Persist 설정
+const persistConfig = {
+  key: 'root',
+  version: 1,
+  storage,
+  whitelist: ['auth'], // auth 상태만 저장 (원하는 reducer만 선택 가능)
+};
+
+// Root Reducer
+const rootReducer = combineReducers({
+  auth: authReducer,
+  books: booksReducer,
+});
+
+// Persisted Reducer
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
 export const store = configureStore({
-  reducer: {
-    books: booksReducer,
-    auth: authReducer,
-  },
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['auth/login/fulfilled', 'auth/register/fulfilled', 'auth/checkSession/fulfilled'],
-        ignoredPaths: ['auth.user'],
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
 });
 
+// Persistor 생성 (나중에 main.tsx에서 사용)
+export const persistor = persistStore(store);
+
+// TypeScript 타입 export
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
