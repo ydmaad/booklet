@@ -3,16 +3,24 @@ import { useNavigate, useParams } from "react-router-dom";
 import InputField from "../components/InputField";
 import { IoBookOutline } from "react-icons/io5";
 import type { AladinResponse } from "../types/book.types";
+import { supabase } from "../lib/supabaseClient";
+import type { RootState } from "./../store/store";
+import { useAppSelector } from "../store/hooks";
 
 type ReadStatus = "읽고 싶은" | "읽는 중" | "읽음" | "잠시 멈춤" | "중단" | "";
 
 const ReviewCreatePage = () => {
   const { isbn } = useParams();
   const [bookInfo, setBookInfo] = useState<AladinResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [_loading, setLoading] = useState(true);
+  const [_error, setError] = useState("");
   const navigate = useNavigate();
   const [status, setStatus] = useState<ReadStatus>("");
+  const [stars, setStars] = useState("");
+  const [memo, setMemo] = useState("");
+  const user = useAppSelector((state: RootState) => state.auth.user);
+
+  console.log("user 정보:::::::::", user);
 
   const statusColors: Record<Exclude<ReadStatus, "">, string> = {
     "읽고 싶은": "text-pink-800",
@@ -48,6 +56,49 @@ const ReviewCreatePage = () => {
     };
     fetchBookInfo();
   }, [isbn, navigate]);
+
+  const handleSubmit = async () => {
+    if (!status) {
+      alert("읽기 상태를 선택해주세요!");
+      return;
+    }
+
+    if (!stars) {
+      alert("별점을 선택해주세요!");
+      return;
+    }
+
+    if (!memo) {
+      alert("내용을 입력해주세요!");
+      return;
+    }
+
+    const reviewData = {
+      isbn: isbn,
+      title: bookInfo?.item?.[0]?.title,
+      author: bookInfo?.item?.[0]?.author,
+      publisher: bookInfo?.item?.[0]?.publisher,
+      pubDate: bookInfo?.item?.[0]?.pubDate,
+      cover: bookInfo?.item?.[0]?.cover,
+      status: status,
+      stars: Number(stars),
+      memo: memo,
+    };
+
+    const { data, error } = await supabase
+      .from("book_reviews")
+      .insert([reviewData]);
+
+    if (error) {
+      console.error("저장 실패:::", error);
+      alert("리뷰 저장에 실패했습니다.");
+      return;
+    }
+
+    navigate("/");
+    console.log("저장 성공:::", data);
+  };
+
   return (
     <div>
       <div className="flex flex-col items-center text-center  py-10">
@@ -110,8 +161,10 @@ const ReviewCreatePage = () => {
           <div className="flex flex-row items-center gap-10 mb-5">
             <p className="text-lg w-[120px]">별점</p>
             <select
-              name="star"
-              id="star"
+              name="stars"
+              id="stars"
+              value={stars}
+              onChange={(e) => setStars(e.target.value)}
               className="text-lg border py-1 px-2 rounded-lg "
             >
               <option value="1">⭐️</option>
@@ -126,6 +179,8 @@ const ReviewCreatePage = () => {
             <textarea
               name="memo"
               id="memo"
+              value={memo}
+              onChange={(e) => setMemo(e.target.value)}
               placeholder="책을 읽고 느낀 점이나 기억하고 싶은 문장을 적어보세요."
               className="w-[500px] h-[400px] border rounded-lg p-3 text-base resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
             ></textarea>
@@ -139,7 +194,10 @@ const ReviewCreatePage = () => {
         >
           취소
         </button>
-        <button className="bg-indigo-500 text-white text-xl text-center w-[130px] py-3 rounded-lg shadow-lg shadow-indigo-500/50 hover:bg-indigo-600 transition-colors duration-200">
+        <button
+          onClick={handleSubmit}
+          className="bg-indigo-500 text-white text-xl text-center w-[130px] py-3 rounded-lg shadow-lg shadow-indigo-500/50 hover:bg-indigo-600 transition-colors duration-200"
+        >
           확인
         </button>
       </div>
