@@ -1,10 +1,10 @@
 import { HiOutlineBookmark } from "react-icons/hi";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 import { FiEdit } from "react-icons/fi";
 import { FiTrash2 } from "react-icons/fi";
 
 const ReviewDetail = () => {
-  const { reviewId } = useParams();
+  // const { reviewId } = useParams();
   return (
     <div className="my-20 mx-40">
       <div className="flex justify-between">
