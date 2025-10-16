@@ -14,7 +14,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ReviewDetail from "./components/ReviewDetail";
 import EditProfile from "./components/EditProfile";
-import ISBNScanner from "./pages/ISBNScanner";
+import BarcodeScanPage from "./pages/BarcodeScanPage";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -34,7 +34,7 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/mypage" element={user ? <MyPage /> : <Navigate to="/" />} />
         <Route path="/mypage/edit" element={<EditProfile />} />
-        <Route path="/barcode" element={<ISBNScanner />} />/
+        <Route path="/barcode" element={<BarcodeScanPage />} />/
         <Route path="/isbn" element={<IsbnInputPage />} />
         <Route path="/my-review/:isbn" element={<ReviewCreatePage />} />
         <Route path="/review" element={<ReviewDetail />} />
