@@ -131,6 +131,8 @@ export const logout = createAsyncThunk(
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      // ✅ 로그아웃 성공하면 localStorage도 비움
+      // (이 부분은 extraReducers의 logout.fulfilled에서 처리 가능)
     } catch (error: any) {
       console.error('로그아웃 에러:', error);
       return rejectWithValue(error.message || '로그아웃에 실패했습니다.');
@@ -312,6 +314,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = null;
         state.profile = null;
+        // ✅ Redux Persist가 자동으로 localStorage에서 삭제함
       })
       .addCase(logout.rejected, (state, action) => {
         state.loading = false;
