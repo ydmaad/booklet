@@ -5,7 +5,7 @@ import { IoBookOutline } from "react-icons/io5";
 import type { AladinResponse } from "../types/book.types";
 import { supabase } from "../lib/supabaseClient";
 import type { RootState } from "./../store/store";
-import { useAppSelector } from "../store/hooks";
+import { useSelector } from "react-redux";
 
 type ReadStatus = "읽고 싶은" | "읽는 중" | "읽음" | "잠시 멈춤" | "중단" | "";
 
@@ -18,7 +18,8 @@ const ReviewCreatePage = () => {
   const [status, setStatus] = useState<ReadStatus>("");
   const [stars, setStars] = useState("");
   const [memo, setMemo] = useState("");
-  const user = useAppSelector((state: RootState) => state.auth.user);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useSelector((state: RootState) => state.auth);
 
   console.log("user 정보:::::::::", user);
 
@@ -58,6 +59,8 @@ const ReviewCreatePage = () => {
   }, [isbn, navigate]);
 
   const handleSubmit = async () => {
+    if (isSubmitting) return;
+
     if (!status) {
       alert("읽기 상태를 선택해주세요!");
       return;
@@ -73,6 +76,8 @@ const ReviewCreatePage = () => {
       return;
     }
 
+    setIsSubmitting(true);
+
     const reviewData = {
       isbn: isbn,
       title: bookInfo?.item?.[0]?.title,
@@ -83,6 +88,7 @@ const ReviewCreatePage = () => {
       status: status,
       stars: Number(stars),
       memo: memo,
+      user_id: user!.id,
     };
 
     const { data, error } = await supabase
@@ -92,6 +98,7 @@ const ReviewCreatePage = () => {
     if (error) {
       console.error("저장 실패:::", error);
       alert("리뷰 저장에 실패했습니다.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -196,9 +203,10 @@ const ReviewCreatePage = () => {
         </button>
         <button
           onClick={handleSubmit}
+          disabled={isSubmitting}
           className="bg-indigo-500 text-white text-xl text-center w-[130px] py-3 rounded-lg shadow-lg shadow-indigo-500/50 hover:bg-indigo-600 transition-colors duration-200"
         >
-          확인
+          {isSubmitting ? "저장 중..." : "확인"}
         </button>
       </div>
     </div>
