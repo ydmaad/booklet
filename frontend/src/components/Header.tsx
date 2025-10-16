@@ -29,7 +29,7 @@ const Header = () => {
         {user ? (
           <div className="flex justify-center items-center">
             <span className="text-lg">{profile?.nickname} 님</span>
-            <Link to="/mypage" className="text-lg">
+            <Link to="/mypage" className="text-lg ml-5">
               마이페이지
             </Link>
             <button onClick={handleLogout} className="ml-5">
