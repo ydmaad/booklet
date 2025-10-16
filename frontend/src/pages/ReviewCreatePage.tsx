@@ -21,7 +21,7 @@ const ReviewCreatePage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useSelector((state: RootState) => state.auth);
 
-  console.log("user 정보:::::::::", user);
+  // console.log("user 정보:::::::::", user);
 
   const statusColors: Record<Exclude<ReadStatus, "">, string> = {
     "읽고 싶은": "text-pink-800",
@@ -47,7 +47,7 @@ const ReviewCreatePage = () => {
 
         const data = await response.json();
         setBookInfo(data);
-        console.log("받아온 책 정보:::", data.item[0]);
+        // console.log("받아온 책 정보:::", data.item[0]);
       } catch (err: any) {
         console.error("api 에러:::", err);
         setError(err.message);
