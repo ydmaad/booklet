@@ -12,7 +12,7 @@ export interface Profile {
   updated_at: string;
 }
 
-// Auth 상태 타입
+// Redux Auth 상태 타입
 export interface AuthState {
   user: User | null;
   profile: Profile | null;
