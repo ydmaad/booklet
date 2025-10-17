@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import { supabase } from '../../lib/supabaseClient';
-import type { Profile, AuthState } from '../../types/user.types';
+import type { Profile, AuthState, DeletedAccountInfo } from '../../types/user.types';
+import type { User } from '@supabase/supabase-js';
 
 // 초기 상태
 const initialState: AuthState = {
@@ -8,13 +9,24 @@ const initialState: AuthState = {
   profile: null,
   loading: false,
   error: null,
+  deletedAccountInfo: null,
+};
+
+// 복구 가능 기간 계산
+const calculateDaysLeft = (deletedAt: string): number => {
+  const deletedDate = new Date(deletedAt);
+  const now = new Date();
+  const daysElapsed = Math.floor(
+    (now.getTime() - deletedDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  return 30 - daysElapsed;
 };
 
 // ========================================
 // 비동기 Thunk Actions
 // ========================================
 
-// 회원가입
+// 회원가입(재가입 차단 로직 추가)
 export const register = createAsyncThunk(
   'auth/register',
   async (
@@ -30,18 +42,36 @@ export const register = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      // 1. 닉네임 중복 체크
+      // 1. 탈퇴한 계정인지 확인
+      const { data: deletedAccount } = await supabase
+        .from('profiles')
+        .select('is_deleted, deleted_at, email')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (deletedAccount && deletedAccount.is_deleted) {
+        const daysLeft = calculateDaysLeft(deletedAccount.deleted_at);
+        
+        if (daysLeft > 0) {
+          throw new Error(
+            `이 이메일은 탈퇴 후 ${daysLeft}일이 남았습니다.\n로그인하여 계정을 복구하거나, ${daysLeft}일 후에 다시 시도해주세요.`
+          );
+        }
+      }
+
+      // 2. 닉네임 중복 체크
       const { data: existingProfile } = await supabase
         .from('profiles')
         .select('nickname')
         .eq('nickname', nickname)
+        .eq('is_deleted', false) // 활성 계정만 체크
         .maybeSingle();
 
       if (existingProfile) {
         throw new Error('이미 사용 중인 닉네임입니다.');
       }
 
-      // 2. 회원가입 (auth.users에 계정 생성)
+      // 3. 회원가입 (auth.users에 계정 생성)
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -87,7 +117,7 @@ export const register = createAsyncThunk(
   }
 );
 
-// 로그인
+// 로그인(탈퇴 계정 감지 추가)
 export const login = createAsyncThunk(
   'auth/login',
   async (
@@ -95,6 +125,33 @@ export const login = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
+      // 1. 탈퇴한 계정인지 먼저 확인
+      const { data: profileCheck } = await supabase
+        .from('profiles')
+        .select('is_deleted, deleted_at, email')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (profileCheck && profileCheck.is_deleted) {
+        const daysLeft = calculateDaysLeft(profileCheck.deleted_at);
+
+        // 복구 가능 기간이 지났으면
+        if (daysLeft <= 0) {
+          throw new Error('탈퇴 후 30일이 지나 계정이 삭제되었습니다.');
+        }
+
+        // 복구 가능하면 정보 반환 (에러로 처리하여 복구 모달 표시)
+        return rejectWithValue({
+          type: 'ACCOUNT_DELETED',
+          message: '탈퇴한 계정입니다. 복구하시겠습니까?',
+          deletedAccountInfo: {
+            email: profileCheck.email,
+            deleted_at: profileCheck.deleted_at,
+            days_left: daysLeft,
+          },
+        });
+      }
+
       // 1. 로그인 (auth.users에서 인증)
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
@@ -109,6 +166,7 @@ export const login = createAsyncThunk(
         .from('profiles')
         .select('*')
         .eq('id', authData.user.id)
+        .eq('is_deleted', false) // 🆕 활성 계정만
         .maybeSingle();
 
       if (profileError) {
@@ -119,7 +177,66 @@ export const login = createAsyncThunk(
       return { user: authData.user, profile };
     } catch (error: any) {
       console.error('로그인 에러:', error);
+
+      // 🆕 탈퇴 계정인 경우 특별 처리
+      if (error.type === 'ACCOUNT_DELETED') {
+        return rejectWithValue(error);
+      }
+      
       return rejectWithValue(error.message || '로그인에 실패했습니다.');
+    }
+  }
+);
+
+// 🆕 탈퇴한 계정 복구
+export const recoverAccount = createAsyncThunk(
+  'auth/recoverAccount',
+  async (
+    { email, password }: { email: string; password: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 1. 로그인
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) throw authError;
+      if (!authData.user) throw new Error('인증에 실패했습니다.');
+
+      // 2. 프로필 복구
+      const { data: profile, error: recoverError } = await supabase
+        .from('profiles')
+        .update({
+          is_deleted: false,
+          deleted_at: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', authData.user.id)
+        .select()
+        .maybeSingle();
+
+      if (recoverError || !profile) {
+        throw new Error('계정 복구에 실패했습니다.');
+      }
+
+      // 3. 리뷰도 복구 (있다면)
+      // await supabase
+      //   .from('book_reviews')
+      //   .update({
+      //     is_deleted: false,
+      //     deleted_at: null,
+      //   })
+      //   .eq('user_id', authData.user.id);
+
+      return {
+        user: authData.user,
+        profile,
+      };
+    } catch (error: any) {
+      console.error('계정 복구 에러:', error);
+      return rejectWithValue(error.message || '계정 복구에 실패했습니다.');
     }
   }
 );
@@ -157,6 +274,7 @@ export const checkSession = createAsyncThunk(
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
+        .eq('is_deleted', false)
         .maybeSingle();
 
       if (profileError) {
@@ -169,6 +287,22 @@ export const checkSession = createAsyncThunk(
       console.error('세션 체크 에러:', error);
       return rejectWithValue(error.message);
     }
+  }
+);
+
+// 프로필 조회
+export const fetchProfile = createAsyncThunk(
+  'auth/fetchProfile',
+  async (userId: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .eq('is_deleted', false)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data as Profile;
   }
 );
 
@@ -192,12 +326,13 @@ export const updateProfile = createAsyncThunk(
         throw new Error('로그인이 필요합니다.');
       }
 
-      // 닉네임 변경 시 중복 확인
+      // 닉네임 변경 시 중복 확인(활성 계정만)
       if (updates.nickname && updates.nickname !== state.auth.profile?.nickname) {
         const { data: existingProfile } = await supabase
           .from('profiles')
           .select('nickname')
           .eq('nickname', updates.nickname)
+          .eq('is_deleted', false) 
           .maybeSingle();
 
         if (existingProfile) {
@@ -260,6 +395,45 @@ export const updatePassword = createAsyncThunk(
   }
 );
 
+// 회원탈퇴 (Soft Delete)
+export const softDeleteAccount = createAsyncThunk(
+  'auth/softDeleteAccount',
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      // 1. 프로필 soft delete
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          is_deleted: true,
+          deleted_at: new Date().toISOString(),
+        })
+        .eq('id', userId);
+
+      if (profileError) throw profileError;
+
+      // 2. 리뷰도 soft delete
+      // const { error: reviewError } = await supabase
+      //   .from('book_reviews')
+      //   .update({
+      //     is_deleted: true,
+      //     deleted_at: new Date().toISOString(),
+      //   })
+      //   .eq('user_id', userId);
+
+      // if (reviewError) throw reviewError;
+
+      // 3. 로그아웃
+      const { error: signOutError } = await supabase.auth.signOut();
+      if (signOutError) throw signOutError;
+
+      return true;
+    } catch (error: any) {
+      console.error('회원탈퇴 에러:', error);
+      return rejectWithValue(error.message || '회원탈퇴에 실패했습니다.');
+    }
+  }
+);
+
 // ========================================
 // Slice
 // ========================================
@@ -268,12 +442,29 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    clearError: (state) => {
-      state.error = null;
+    setUser: (state, action: PayloadAction<User | null>) => {
+      state.user = action.payload;
     },
-    setProfile: (state, action: PayloadAction<Profile>) => {
+    setProfile: (state, action: PayloadAction<Profile | null>) => {
       state.profile = action.payload;
     },
+    // 🆕 탈퇴 계정 정보 설정
+    setDeletedAccountInfo: (
+      state,
+      action: PayloadAction<DeletedAccountInfo | null>
+    ) => {
+      state.deletedAccountInfo = action.payload;
+    },
+    clearAuth: (state) => {
+      state.user = null;
+      state.profile = null;
+      state.error = null;
+      state.deletedAccountInfo = null; // 🆕 추가
+    },
+    clearError: (state) => {
+      state.error = null;
+      state.deletedAccountInfo = null; // 🆕 추가
+    },    
   },
   extraReducers: (builder) => {
     builder
@@ -291,17 +482,41 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      // 로그인
+      // 로그인 (🆕 탈퇴 계정 감지 처리)
       .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.deletedAccountInfo = null; // 🆕 초기화
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
         state.profile = action.payload.profile;
       })
-      .addCase(login.rejected, (state, action) => {
+      .addCase(login.rejected, (state, action: any) => {
+        state.loading = false;
+        const payload = action.payload;
+
+        // 🆕 탈퇴 계정인 경우 특별 처리
+        if (payload?.type === 'ACCOUNT_DELETED') {
+          state.deletedAccountInfo = payload.deletedAccountInfo;
+          state.error = payload.message;
+        } else {
+          state.error = typeof payload === 'string' ? payload : '로그인에 실패했습니다.';
+        }
+      })
+      // 🆕 계정 복구
+      .addCase(recoverAccount.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(recoverAccount.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.profile = action.payload.profile;
+        state.deletedAccountInfo = null; // 복구 완료
+      })
+      .addCase(recoverAccount.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
@@ -327,6 +542,19 @@ const authSlice = createSlice({
           state.profile = action.payload.profile;
         }
       })
+      // fetchProfile
+      .addCase(fetchProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.profile = action.payload;
+      })
+      .addCase(fetchProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch profile';
+      })
       // 프로필 업데이트
       .addCase(updateProfile.pending, (state) => {
         state.loading = true;
@@ -351,9 +579,23 @@ const authSlice = createSlice({
       .addCase(updatePassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      // softDeleteAccount
+      .addCase(softDeleteAccount.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(softDeleteAccount.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.profile = null;
+      })
+      .addCase(softDeleteAccount.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
 
-export const { clearError, setProfile } = authSlice.actions;
+export const { setUser, setProfile, setDeletedAccountInfo, clearAuth, clearError } = authSlice.actions;
 export default authSlice.reducer;
