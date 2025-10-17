@@ -5,11 +5,13 @@ export interface Profile {
   id: string;
   email: string;
   nickname: string;
-  avatar_url?: string;
-  bio?: string;
-  keywords?: string[];
+  avatar_url?: string | null;
+  bio?: string | null;
+  keywords: string[] | null;
   created_at: string;
   updated_at: string;
+  is_deleted: boolean;
+  deleted_at: string | null;
 }
 
 // Redux Auth 상태 타입
