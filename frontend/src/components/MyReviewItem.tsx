@@ -19,7 +19,7 @@ const MyReviewItem = ({
         <img
           src={cover || "/default_image.jpg"}
           alt={title}
-          className="w-36 h-36 object-cover"
+          className="w-32 h-40 object-cover border"
         />
       </div>
 
