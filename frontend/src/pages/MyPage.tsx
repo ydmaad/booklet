@@ -1,8 +1,10 @@
-import { FiEdit } from "react-icons/fi";
-import { LuShare } from "react-icons/lu";
-import { FaSearch } from "react-icons/fa";
+import { FiEdit } from 'react-icons/fi';
+import { LuShare } from 'react-icons/lu';
+import { FaSearch } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const MyPage = () => {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-row justify-start mt-20">
       <div className="flex flex-col items-center mx-10">
@@ -14,7 +16,10 @@ const MyPage = () => {
         />
         <div className="flex flex-row">
           <p className="text-xl font-bold mr-1">유저닉네임</p>
-          <FiEdit className="w-4 h-4 cursor-pointer mt-1 text-gray-500" />
+          <FiEdit
+            onClick={() => navigate('/mypage/edit')}
+            className="w-4 h-4 cursor-pointer mt-1 text-gray-500"
+          />
         </div>
         <p className="text-base font-bold underline text-gray-500">
           xxxxxx@xxxxxx.com
