@@ -14,7 +14,7 @@ const MyReviewItem = ({
   stars,
 }: MyReviewItemProps) => {
   return (
-    <div className="flex items-center gap-5 border rounded-2xl shadow-md p-5 bg-white hover:shadow-lg transition-shadow duration-200">
+    <div className="flex items-center gap-5 border rounded-2xl shadow-md p-5 bg-white hover:shadow-lg transition-shadow duration-200 cursor-pointer">
       <div className="flex-shrink-0">
         <img
           src={cover || "/default_image.jpg"}
