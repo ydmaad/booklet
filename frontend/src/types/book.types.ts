@@ -34,3 +34,11 @@ export interface Review {
   pubDate: string;
   created_at: string;
 }
+
+export type ReadStatus =
+  | '📘 읽고 싶은'
+  | '📖 읽는 중'
+  | '✅ 읽음'
+  | '⏸ 잠시 멈춤'
+  | '⛔ 중단'
+  | '';
