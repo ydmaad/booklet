@@ -1,5 +1,5 @@
 import { HiOutlineBookmark } from 'react-icons/hi';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FiEdit } from 'react-icons/fi';
 import { FiTrash2 } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
@@ -15,6 +15,7 @@ interface ReviewWithProfile extends Review {
 const ReviewDetail = () => {
   const { id } = useParams();
   const [review, setReview] = useState<ReviewWithProfile | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchReview = async () => {
@@ -31,6 +32,21 @@ const ReviewDetail = () => {
     };
     fetchReview();
   }, [id]);
+
+  const handleDelete = async () => {
+    if (window.confirm('정말 삭제하시겠습니까?')) {
+      const { error } = await supabase
+        .from('book_reviews')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('리뷰 삭제 실패:::', error);
+      } else {
+        navigate('/');
+      }
+    }
+  };
 
   if (!review) {
     return (
@@ -70,8 +86,8 @@ const ReviewDetail = () => {
           </div>
         </div>
         <div className="flex flex-row gap-3 text-gray-500">
-          <FiEdit className="w-6 h-6" />
-          <FiTrash2 className="w-6 h-6" />
+          <FiEdit className="w-6 h-6 cursor-pointer" />
+          <FiTrash2 onClick={handleDelete} className="w-6 h-6 cursor-pointer" />
         </div>
       </div>
       <div className="border-t my-10 border-gray-300"></div>
