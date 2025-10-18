@@ -31,9 +31,11 @@ const MyReviewList = () => {
 
   return (
     <div className="mx-40">
-      <h1 className="text-3xl font-bold text-gray-700 py-6">
-        나의 독서 리스트
-      </h1>
+      <div className="text-center mx-auto mt-10">
+        <h1 className="text-3xl font-bold text-gray-700 py-6">
+          나의 독서 리스트
+        </h1>
+      </div>
       {myReviews.length === 0 ? (
         <p className="">첫 책을 등록하면 이곳에 기록이 시작돼요!</p>
       ) : (
