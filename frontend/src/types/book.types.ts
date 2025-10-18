@@ -29,4 +29,8 @@ export interface Review {
   memo: string;
   stars: number;
   user_id: string;
+  status: string;
+  publisher: string;
+  pubDate: string;
+  created_at: string;
 }
