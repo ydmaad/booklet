@@ -86,7 +86,10 @@ const ReviewDetail = () => {
           </div>
         </div>
         <div className="flex flex-row gap-3 text-gray-500">
-          <FiEdit className="w-6 h-6 cursor-pointer" />
+          <FiEdit
+            onClick={() => navigate(`/review/edit/${id}`)}
+            className="w-6 h-6 cursor-pointer"
+          />
           <FiTrash2 onClick={handleDelete} className="w-6 h-6 cursor-pointer" />
         </div>
       </div>
