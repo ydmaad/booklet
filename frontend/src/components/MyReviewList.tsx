@@ -1,16 +1,7 @@
-import MyReviewItem from "./MyReviewItem";
-import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabaseClient";
-
-interface Review {
-  id: string;
-  cover: string;
-  title: string;
-  author: string;
-  memo: string;
-  stars: number;
-  user_id: string;
-}
+import MyReviewItem from './MyReviewItem';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabaseClient';
+import type { Review } from '../types/book.types';
 
 const MyReviewList = () => {
   const [myReviews, setMyReviews] = useState<Review[]>([]);
@@ -26,12 +17,12 @@ const MyReviewList = () => {
       }
 
       const { data, error } = await supabase
-        .from("book_reviews")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false }); // 최신순 정렬
+        .from('book_reviews')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false }); // 최신순 정렬
 
-      if (error) console.error("리뷰 불러오기 실패:", error);
+      if (error) console.error('리뷰 불러오기 실패:', error);
       else setMyReviews(data || []);
     };
 
@@ -47,9 +38,10 @@ const MyReviewList = () => {
         <p className="">첫 책을 등록하면 이곳에 기록이 시작돼요!</p>
       ) : (
         <div className="flex flex-col gap-5">
-          {myReviews.map((review, index) => (
+          {myReviews.map((review) => (
             <MyReviewItem
-              key={index}
+              key={review.id}
+              id={review.id}
               cover={review.cover}
               title={review.title}
               author={review.author}

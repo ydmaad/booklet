@@ -20,3 +20,13 @@ export interface BooksState {
   loading: boolean;
   error: string | null;
 }
+
+export interface Review {
+  id: string;
+  cover: string;
+  title: string;
+  author: string;
+  memo: string;
+  stars: number;
+  user_id: string;
+}
