@@ -37,7 +37,11 @@ const MyReviewList = () => {
         </h1>
       </div>
       {myReviews.length === 0 ? (
-        <p className="">첫 책을 등록하면 이곳에 기록이 시작돼요!</p>
+        <div className="h-60 flex justify-center items-center">
+          <p className="text-3xl text-gray-600">
+            첫 책을 등록하면 이곳에 기록이 시작돼요!
+          </p>
+        </div>
       ) : (
         <div className="flex flex-col gap-5">
           {myReviews.map((review) => (
