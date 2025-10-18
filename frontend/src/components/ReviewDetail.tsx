@@ -61,7 +61,7 @@ const ReviewDetail = () => {
       <div className="flex justify-between">
         <div className="flex flex-row">
           {/* 이미지 */}
-          <div className="w-44 h-60 border mr-20">
+          <div className="w-44 h-60 border mr-20 flex-shrink-0">
             <img
               src={review.cover}
               alt={review.title}
@@ -73,15 +73,51 @@ const ReviewDetail = () => {
           <div className="my-auto space-y-7">
             <p className="text-base">{review.status}</p>
             <div className="flex flex-row">
-              <p className="text-5xl font-bold mr-3">{review.title}</p>
+              <p
+                className={` font-bold mr-3 ${
+                  review.title.length <= 15 ? 'text-5xl' : 'text-4xl'
+                }`}
+              >
+                {review.title}
+              </p>
               <HiOutlineBookmark className="w-10 h-10 my-auto" />
             </div>
             <div className="flex flex-row text-gray-400">
-              <p className="mr-4">{review.publisher}</p>
-              <span className="mr-4">|</span>
-              <p className="mr-4">{review.author}</p>
-              <span className="mr-4">|</span>
-              <p>{review.pubDate}</p>
+              <p
+                className={`mr-4 ${
+                  review.author.length <= 30 ? 'text-base' : 'text-sm'
+                }`}
+              >
+                {review.publisher}
+              </p>
+              <span
+                className={`mr-4 ${
+                  review.author.length <= 30 ? 'text-base' : 'text-sm'
+                }`}
+              >
+                |
+              </span>
+              <p
+                className={`mr-4 ${
+                  review.author.length <= 30 ? 'text-base' : 'text-sm'
+                }`}
+              >
+                {review.author}
+              </p>
+              <span
+                className={`mr-4 ${
+                  review.author.length <= 30 ? 'text-base' : 'text-sm'
+                }`}
+              >
+                |
+              </span>
+              <p
+                className={`${
+                  review.author.length <= 30 ? 'text-base' : 'text-sm'
+                }`}
+              >
+                {review.pubDate}
+              </p>
             </div>
           </div>
         </div>
