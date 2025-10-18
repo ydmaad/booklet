@@ -4,17 +4,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { checkSession } from './store/slices/authSlice';
 import type { AppDispatch, RootState } from './store/store';
 
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import MainPage from "./pages/MainPage";
-import MyPage from "./pages/MyPage";
-import IsbnInputPage from "./pages/IsbnInputPage";
-import ReviewCreatePage from "./pages/ReviewCreatePage";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import ReviewDetail from "./components/ReviewDetail";
-import EditProfile from "./components/EditProfile";
-import BarcodeScanPage from "./pages/BarcodeScanPage";
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import MainPage from './pages/MainPage';
+import MyPage from './pages/MyPage';
+import IsbnInputPage from './pages/IsbnInputPage';
+import ReviewCreatePage from './pages/ReviewCreatePage';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import ReviewDetail from './components/ReviewDetail';
+import EditProfile from './components/EditProfile';
+import BarcodeScanPage from './pages/BarcodeScanPage';
+import ReviewEdit from './components/ReviewEdit';
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -32,14 +33,24 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="/mypage" element={user ? <MyPage /> : <Navigate to="/" />} />
+        <Route
+          path="/mypage"
+          element={user ? <MyPage /> : <Navigate to="/" />}
+        />
         <Route path="/mypage/edit" element={<EditProfile />} />
         <Route path="/barcode" element={<BarcodeScanPage />} />/
         <Route path="/isbn" element={<IsbnInputPage />} />
         <Route path="/my-review/:isbn" element={<ReviewCreatePage />} />
-        <Route path="/review" element={<ReviewDetail />} />
-        <Route path="/login" element={user ? <Navigate to="/" /> : <LoginPage />} />
-        <Route path="/register" element={user ? <Navigate to="/" /> : <RegisterPage />} />
+        <Route path="/review/:id" element={<ReviewDetail />} />
+        <Route path="/review/edit/:id" element={<ReviewEdit />} />
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/" /> : <LoginPage />}
+        />
+        <Route
+          path="/register"
+          element={user ? <Navigate to="/" /> : <RegisterPage />}
+        />
       </Routes>
       <Footer />
     </div>

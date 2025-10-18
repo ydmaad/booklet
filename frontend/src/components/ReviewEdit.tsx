@@ -1,26 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import InputField from '../components/InputField';
-import { IoBookOutline } from 'react-icons/io5';
-import type { AladinResponse, ReadStatus } from '../types/book.types';
 import { supabase } from '../lib/supabaseClient';
-import type { RootState } from './../store/store';
-import { useSelector } from 'react-redux';
+import { IoBookOutline } from 'react-icons/io5';
+import InputField from './InputField';
+import type { ReadStatus, Review } from '../types/book.types';
 
-const ReviewCreatePage = () => {
-  const { isbn } = useParams();
-  const [bookInfo, setBookInfo] = useState<AladinResponse | null>(null);
-  const [_loading, setLoading] = useState(true);
-  const [_error, setError] = useState('');
+const ReviewEdit = () => {
+  const { id } = useParams();
+  const [review, setReview] = useState<Review | null>(null);
   const navigate = useNavigate();
   const [status, setStatus] = useState<ReadStatus>('');
   const [stars, setStars] = useState('');
   const [memo, setMemo] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user } = useSelector((state: RootState) => state.auth);
-
-  // console.log("user 정보:::::::::", user);
-
   const statusColors: Record<Exclude<ReadStatus, ''>, string> = {
     '📘 읽고 싶은': 'text-pink-800',
     '📖 읽는 중': 'text-blue-800',
@@ -28,80 +20,56 @@ const ReviewCreatePage = () => {
     '⏸ 잠시 멈춤': 'text-yellow-800',
     '⛔ 중단': 'text-red-800',
   };
+
   useEffect(() => {
-    if (!isbn) {
-      navigate('/isbn');
-      return;
-    }
+    const fetchReview = async () => {
+      const { data, error } = await supabase
+        .from('book_reviews')
+        .select('*')
+        .eq('id', id)
+        .single();
 
-    const fetchBookInfo = async () => {
-      try {
-        setLoading(true);
-        setError('');
+      console.log(data);
+      if (data) {
+        setReview(data);
+        setStatus(data.status);
+        setStars(data.stars.toString());
+        setMemo(data.memo);
+      }
 
-        const response = await fetch(
-          `http://localhost:3000/api/books/isbn/${isbn}`
-        );
-
-        const data = await response.json();
-        setBookInfo(data);
-        // console.log("받아온 책 정보:::", data.item[0]);
-      } catch (err: any) {
-        console.error('api 에러:::', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      if (error) {
+        console.error('데이터를 가져오는 중 오류가 있습니다.', error);
       }
     };
-    fetchBookInfo();
-  }, [isbn, navigate]);
+    fetchReview();
+  }, [id]);
 
   const handleSubmit = async () => {
     if (isSubmitting) return;
 
-    if (!status) {
-      alert('읽기 상태를 선택해주세요!');
-      return;
-    }
-
-    if (!stars) {
-      alert('별점을 선택해주세요!');
-      return;
-    }
-
-    if (!memo) {
-      alert('내용을 입력해주세요!');
+    if (!status || !stars || !memo) {
+      alert('모든 항목을 입력해주세요!');
       return;
     }
 
     setIsSubmitting(true);
 
-    const reviewData = {
-      isbn: isbn,
-      title: bookInfo?.item?.[0]?.title,
-      author: bookInfo?.item?.[0]?.author,
-      publisher: bookInfo?.item?.[0]?.publisher,
-      pubDate: bookInfo?.item?.[0]?.pubDate,
-      cover: bookInfo?.item?.[0]?.cover,
-      status: status,
-      stars: Number(stars),
-      memo: memo,
-      user_id: user!.id,
-    };
-
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('book_reviews')
-      .insert([reviewData]);
+      .update({
+        status: status,
+        stars: Number(stars),
+        memo: memo,
+      })
+      .eq('id', id);
 
     if (error) {
-      console.error('저장 실패:::', error);
-      alert('리뷰 저장에 실패했습니다.');
+      console.error('수정 실패:::', error);
+      alert('리뷰 수정에 실패했습니다!');
       setIsSubmitting(false);
-      return;
+    } else {
+      navigate(`/review/${id}`);
     }
-
-    navigate('/');
-    console.log('저장 성공:::', data);
   };
 
   return (
@@ -117,33 +85,21 @@ const ReviewCreatePage = () => {
       <div className="flex gap-20 justify-center py-10">
         <div className="w-[350px] h-[500px] border">
           <img
-            src={bookInfo?.item?.[0]?.cover}
-            alt=""
+            src={review?.cover}
+            alt={review?.title}
             className="w-full h-full object-contain"
           />
         </div>
         <div>
           <InputField
             label="책 제목"
-            value={bookInfo?.item?.[0]?.title}
+            value={review?.title}
             placeholder=""
             onChange={(e) => console.log(e)}
           />
-          <InputField
-            label="저자"
-            value={bookInfo?.item?.[0]?.author}
-            placeholder=""
-          />{' '}
-          <InputField
-            label="출판사"
-            value={bookInfo?.item?.[0]?.publisher}
-            placeholder=""
-          />
-          <InputField
-            label="발행일"
-            value={bookInfo?.item?.[0]?.pubDate}
-            placeholder=""
-          />
+          <InputField label="저자" value={review?.author} placeholder="" />
+          <InputField label="출판사" value={review?.publisher} placeholder="" />
+          <InputField label="발행일" value={review?.pubDate} placeholder="" />
           <div className="flex flex-row items-center gap-10 mb-5">
             <p className="text-lg w-[120px]">읽기 상태</p>
             <select
@@ -156,11 +112,11 @@ const ReviewCreatePage = () => {
               }`}
             >
               <option value="">상태 선택</option>
-              <option value="📘 읽고 싶은">📘 읽고 싶은</option>
-              <option value="📖 읽는 중">📖 읽는 중</option>
-              <option value="✅ 읽음">✅ 읽음</option>
-              <option value="⏸ 잠시 멈춤">⏸ 잠시 멈춤</option>
-              <option value="⛔ 중단">⛔ 중단</option>
+              <option value="읽고 싶은">📘 읽고 싶은</option>
+              <option value="읽는 중">📖 읽는 중</option>
+              <option value="읽음">✅ 읽음</option>
+              <option value="잠시 멈춤">⏸ 잠시 멈춤</option>
+              <option value="중단">⛔ 중단</option>
             </select>
           </div>
           <div className="flex flex-row items-center gap-10 mb-5">
@@ -204,11 +160,11 @@ const ReviewCreatePage = () => {
           disabled={isSubmitting}
           className="bg-indigo-500 text-white text-xl text-center w-[130px] py-3 rounded-lg shadow-lg shadow-indigo-500/50 hover:bg-indigo-600 transition-colors duration-200"
         >
-          {isSubmitting ? '저장 중...' : '확인'}
+          {isSubmitting ? '저장 중...' : '수정'}
         </button>
       </div>
     </div>
   );
 };
 
-export default ReviewCreatePage;
+export default ReviewEdit;

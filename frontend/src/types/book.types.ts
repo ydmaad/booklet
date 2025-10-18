@@ -20,3 +20,25 @@ export interface BooksState {
   loading: boolean;
   error: string | null;
 }
+
+export interface Review {
+  id: string;
+  cover: string;
+  title: string;
+  author: string;
+  memo: string;
+  stars: number;
+  user_id: string;
+  status: string;
+  publisher: string;
+  pubDate: string;
+  created_at: string;
+}
+
+export type ReadStatus =
+  | '📘 읽고 싶은'
+  | '📖 읽는 중'
+  | '✅ 읽음'
+  | '⏸ 잠시 멈춤'
+  | '⛔ 중단'
+  | '';
