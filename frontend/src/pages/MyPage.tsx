@@ -76,15 +76,23 @@ const MyPage = () => {
             className="flex-1 outline-none text-sm"
           />
         </div>
-        <div className="flex justify-end mb-3">
+        <div className="flex justify-end mb-3 mr-5">
           <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
             <LuShare className="w-6 h-6 text-gray-600 hover:text-blue-500" />
           </button>
         </div>
-        <div className="grid grid-cols-3 gap-8 justify-items-end">
-          {filteredReviews?.map((review) => (
-            <MyReviewCard key={review.id} review={review} />
-          ))}
+        <div className="grid grid-cols-3 gap-8 justify-items-center">
+          {filteredReviews && filteredReviews.length > 0 ? (
+            filteredReviews.map((review) => (
+              <MyReviewCard key={review.id} review={review} />
+            ))
+          ) : (
+            <div className="col-span-3 flex justify-center">
+              <p className="text-center text-gray-500 mt-10">
+                검색 결과가 없습니다 😢
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
