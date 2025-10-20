@@ -15,6 +15,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 // @ts-expect-error - Swiper Pagination CSS
 import 'swiper/css/pagination';
+import { API_URL } from '../config/api';
 
 const BestsellerList = () => {
   const books = useAppSelector((state) => state.books);
@@ -25,7 +26,7 @@ const BestsellerList = () => {
     dispatch(fetchBooksStart());
     const fetchBooks = async () => {
       try {
-        const url = 'http://localhost:3000/api/books/list?queryType=Bestseller';
+        const url = `${API_URL}/api/books/list?queryType=Bestseller`;
         const response = await axios.get(url);
         dispatch(fetchBooksSuccess(response.data));
       } catch (error) {
