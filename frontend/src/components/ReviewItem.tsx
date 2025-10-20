@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-interface MyReviewItemProps {
+interface ReviewItemProps {
   id: string;
   cover: string;
   title: string;
@@ -9,14 +9,14 @@ interface MyReviewItemProps {
   stars: number;
 }
 
-const MyReviewItem = ({
+const ReviewItem = ({
   id,
   cover,
   title,
   author,
   memo,
   stars,
-}: MyReviewItemProps) => {
+}: ReviewItemProps) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -47,4 +47,4 @@ const MyReviewItem = ({
   );
 };
 
-export default MyReviewItem;
+export default ReviewItem;

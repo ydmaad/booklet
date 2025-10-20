@@ -1,9 +1,9 @@
-import MyReviewItem from './MyReviewItem';
+import ReviewItem from './ReviewItem';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import type { Review } from '../types/book.types';
 
-const MyReviewList = () => {
+const ReviewList = () => {
   const [myReviews, setMyReviews] = useState<Review[]>([]);
 
   const fetchMyReviews = async () => {
@@ -52,7 +52,7 @@ const MyReviewList = () => {
       ) : (
         <div className="flex flex-col gap-5">
           {myReviews.map((review) => (
-            <MyReviewItem
+            <ReviewItem
               key={review.id}
               id={review.id}
               cover={review.cover}
@@ -68,4 +68,4 @@ const MyReviewList = () => {
   );
 };
 
-export default MyReviewList;
+export default ReviewList;
