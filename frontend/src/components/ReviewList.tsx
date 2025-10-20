@@ -1,49 +1,31 @@
 import ReviewItem from './ReviewItem';
-import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
-import type { Review } from '../types/book.types';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../store/store';
+import { fetchAllReviews } from '../store/slices/reviewsSlice';
 
 const ReviewList = () => {
-  const [myReviews, setMyReviews] = useState<Review[]>([]);
-
-  const fetchMyReviews = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      setMyReviews([]);
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from('book_reviews')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false }); // 최신순 정렬
-
-    if (error) console.error('리뷰 불러오기 실패:', error);
-    else setMyReviews(data || []);
-  };
+  const dispatch = useDispatch<AppDispatch>();
+  const { allReviews, allReviewsLoading } = useSelector(
+    (state: RootState) => state.reviews
+  );
 
   useEffect(() => {
-    fetchMyReviews();
-    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
-      fetchMyReviews();
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
+    dispatch(fetchAllReviews());
+  }, [dispatch]);
 
   return (
     <div className="mx-40">
       <div className="text-center mx-auto mt-10">
         <h1 className="text-3xl font-bold text-gray-700 py-6">
-          나의 독서 리스트
+          최신 리뷰 리스트
         </h1>
       </div>
-      {myReviews.length === 0 ? (
+      {allReviewsLoading ? (
+        <div className="h-60 flex justify-center items-center">
+          <p className="text-3xl text-gray-600">로딩 중...</p>
+        </div>
+      ) : allReviews.length === 0 ? (
         <div className="h-60 flex justify-center items-center">
           <p className="text-3xl text-gray-600">
             첫 책을 등록하면 이곳에 기록이 시작돼요!
@@ -51,7 +33,7 @@ const ReviewList = () => {
         </div>
       ) : (
         <div className="flex flex-col gap-5">
-          {myReviews.map((review) => (
+          {allReviews.map((review) => (
             <ReviewItem
               key={review.id}
               id={review.id}

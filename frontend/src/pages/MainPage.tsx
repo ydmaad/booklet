@@ -1,9 +1,9 @@
-import MyReviewList from "../components/MyReviewList";
-import BestsellerList from "../components/BestsellerList";
-import { Link } from "react-router-dom";
+import ReviewList from '../components/ReviewList';
+import BestsellerList from '../components/BestsellerList';
+import { Link } from 'react-router-dom';
 
 const MainPage = () => {
-  const randomBG = ["/main_hero_2.jpg", "/main_hero_3.jpg", "/main_hero_4.jpg"];
+  const randomBG = ['/main_hero_2.jpg', '/main_hero_3.jpg', '/main_hero_4.jpg'];
   const randomIndex = Math.floor(Math.random() * 3);
   const selectedBG = randomBG[randomIndex];
   return (
@@ -22,7 +22,7 @@ const MainPage = () => {
           기록하러 가기
         </Link>
       </div>
-      <MyReviewList />
+      <ReviewList />
       <BestsellerList />
     </div>
   );

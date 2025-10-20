@@ -4,14 +4,20 @@ import { supabase } from '../../lib/supabaseClient';
 
 type ReviewState = {
   myReviews: Review[];
-  loading: boolean;
-  error: string | null;
+  allReviews: Review[];
+  myReviewsLoading: boolean;
+  allReviewsLoading: boolean;
+  myReviewsError: string | null;
+  allReviewsError: string | null;
 };
 
 const initialState: ReviewState = {
   myReviews: [],
-  loading: false,
-  error: null,
+  allReviews: [],
+  myReviewsLoading: false,
+  allReviewsLoading: false,
+  myReviewsError: null,
+  allReviewsError: null,
 };
 
 const fetchMyReviews = createAsyncThunk(
@@ -32,6 +38,19 @@ const fetchMyReviews = createAsyncThunk(
   }
 );
 
+const fetchAllReviews = createAsyncThunk(
+  'reviews/fetchAllReviews',
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase.from('book_reviews').select('*');
+      if (error) throw error;
+      return data;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const reviewSlice = createSlice({
   name: 'reviews',
   initialState,
@@ -39,20 +58,33 @@ const reviewSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMyReviews.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.myReviewsLoading = true;
+        state.myReviewsError = null;
       })
       .addCase(fetchMyReviews.fulfilled, (state, action) => {
         state.myReviews = action.payload;
-        state.loading = false;
-        state.error = null;
+        state.myReviewsLoading = false;
+        state.myReviewsError = null;
       })
       .addCase(fetchMyReviews.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
+        state.myReviewsLoading = false;
+        state.myReviewsError = action.payload as string;
+      })
+      .addCase(fetchAllReviews.pending, (state) => {
+        state.allReviewsLoading = true;
+        state.allReviewsError = null;
+      })
+      .addCase(fetchAllReviews.fulfilled, (state, action) => {
+        state.allReviews = action.payload;
+        state.allReviewsLoading = false;
+        state.allReviewsError = null;
+      })
+      .addCase(fetchAllReviews.rejected, (state, action) => {
+        state.allReviewsLoading = false;
+        state.allReviewsError = action.payload as string;
       });
   },
 });
 
-export { fetchMyReviews };
+export { fetchMyReviews, fetchAllReviews };
 export default reviewSlice.reducer;
