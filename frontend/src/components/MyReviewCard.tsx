@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import type { Review } from '../types/book.types';
 
 interface MyReviewCardProps {
@@ -5,8 +6,16 @@ interface MyReviewCardProps {
 }
 
 const MyReviewCard = ({ review }: MyReviewCardProps) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/review/${review.id}`);
+  };
   return (
-    <div className="flex flex-col border border-gray-200 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 bg-white w-full max-w-56 cursor-pointer">
+    <div
+      onClick={handleClick}
+      className="flex flex-col border border-gray-200 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 bg-white w-full max-w-56 cursor-pointer"
+    >
       <div className="p-3">
         <div className="relative w-full pb-[135%] overflow-hidden rounded-lg">
           <img
