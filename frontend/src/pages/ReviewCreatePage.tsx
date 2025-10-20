@@ -6,6 +6,7 @@ import type { AladinResponse, ReadStatus } from '../types/book.types';
 import { supabase } from '../lib/supabaseClient';
 import type { RootState } from './../store/store';
 import { useSelector } from 'react-redux';
+import { API_URL } from '../config/api';
 
 const ReviewCreatePage = () => {
   const { isbn } = useParams();
@@ -39,9 +40,7 @@ const ReviewCreatePage = () => {
         setLoading(true);
         setError('');
 
-        const response = await fetch(
-          `http://localhost:3000/api/books/isbn/${isbn}`
-        );
+        const response = await fetch(`${API_URL}/api/books/isbn/${isbn}`);
 
         const data = await response.json();
         setBookInfo(data);
