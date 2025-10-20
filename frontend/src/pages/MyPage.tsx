@@ -4,7 +4,7 @@ import { FaSearch } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../store/store';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchMyReviews } from '../store/slices/reviewsSlice';
 import MyReviewCard from '../components/MyReviewCard';
 
@@ -15,12 +15,19 @@ const MyPage = () => {
   const { myReviews, _loading } = useSelector(
     (state: RootState) => state.reviews
   );
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     if (user?.id) {
       dispatch(fetchMyReviews(user.id));
     }
   }, [user?.id, dispatch]);
+
+  const filteredReviews = myReviews?.filter(
+    (review) =>
+      review.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      review.author.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="flex flex-row justify-start mt-20">
@@ -63,6 +70,8 @@ const MyPage = () => {
           <FaSearch className="text-gray-400 mr-3" />
           <input
             type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="책 제목, 저자로 검색..."
             className="flex-1 outline-none text-sm"
           />
@@ -73,7 +82,7 @@ const MyPage = () => {
           </button>
         </div>
         <div className="grid grid-cols-3 gap-8 justify-items-end">
-          {myReviews?.map((review) => (
+          {filteredReviews?.map((review) => (
             <MyReviewCard key={review.id} review={review} />
           ))}
         </div>
