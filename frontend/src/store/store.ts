@@ -1,6 +1,6 @@
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import { 
-  persistStore, 
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import {
+  persistStore,
   persistReducer,
   FLUSH,
   REHYDRATE,
@@ -10,21 +10,23 @@ import {
   REGISTER,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // localStorage 사용
-import booksReducer from "./slices/booksSlice";
+import booksReducer from './slices/booksSlice';
 import authReducer from './slices/authSlice';
+import reviewReducer from './slices/reviewsSlice';
 
 // Persist 설정
 const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  whitelist: ['auth'], // auth 상태만 저장 (원하는 reducer만 선택 가능)
+  whitelist: ['auth', 'reviews'], // auth 상태만 저장 (원하는 reducer만 선택 가능)
 };
 
 // Root Reducer
 const rootReducer = combineReducers({
   auth: authReducer,
   books: booksReducer,
+  reviews: reviewReducer,
 });
 
 // Persisted Reducer
