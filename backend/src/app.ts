@@ -101,7 +101,6 @@ app.post('/api/books/recommend', async (req: Request, res: Response) => {
     if (!books || books.length === 0) {
       return res.json({ message: '읽은 책이 없어서 추천할 수 없습니다.' });
     }
-    console.log('가져온 책', books);
 
     const bookList = books
       .map((book) => `- ${book.title} (${book.author}) - 별점: ${book.stars}/5`)
@@ -118,8 +117,6 @@ app.post('/api/books/recommend', async (req: Request, res: Response) => {
       3. 책제목 - 저자명
       4. 책제목 - 저자명
       5. 책제목 - 저자명`;
-
-    console.log('프롬프트:', prompt);
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
@@ -138,7 +135,6 @@ app.post('/api/books/recommend', async (req: Request, res: Response) => {
     });
 
     const aiResponse = completion.choices[0]?.message.content;
-    console.log('ai 응답:::', aiResponse);
 
     const bookTitles =
       aiResponse?.match(/\d+\.\s*(.+?)\s*-/g)?.map((line) =>
@@ -147,8 +143,6 @@ app.post('/api/books/recommend', async (req: Request, res: Response) => {
           .replace(/\s*-.*$/, '')
           .trim()
       ) || [];
-
-    console.log('추출된 책 제목:', bookTitles);
 
     const bookDetails = await Promise.all(
       bookTitles.map(async (title) => {
@@ -177,8 +171,6 @@ app.post('/api/books/recommend', async (req: Request, res: Response) => {
     );
 
     const recommendations = bookDetails.filter((book) => book !== null);
-
-    console.log('최종 추천 결과:', recommendations);
 
     res.json({
       message: 'AI 책 추천 성공!',
