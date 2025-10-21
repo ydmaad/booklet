@@ -122,7 +122,7 @@ const ReviewDetail = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-row gap-3 text-gray-500">
+        <div className="flex flex-row gap-3 text-brand-button">
           <FiEdit
             onClick={() => navigate(`/review/edit/${id}`)}
             className="w-6 h-6 cursor-pointer"

@@ -17,7 +17,7 @@ const MainPage = () => {
         </p>
         <Link
           to="/barcode"
-          className="bg-indigo-500 text-white px-4 py-2 rounded-lg shadow-lg shadow-indigo-500/50 hover:bg-indigo-600 transition-colors duration-200"
+          className="bg-brand-button text-white px-4 py-2 rounded-lg shadow-lg shadow-brand-button hover:bg-brand-button/75 transition-colors duration-200"
         >
           기록하러 가기
         </Link>
