@@ -80,6 +80,13 @@ const MyPage = () => {
           <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
             <LuShare className="w-6 h-6 text-gray-600 hover:text-blue-500" />
           </button>
+
+          <button
+            onClick={() => navigate('/recommend')}
+            className="px-4 py-2 bg-[#245A48] text-white rounded-full hover:bg-[#317C61] transition-colors"
+          >
+            ✨ AI 추천받기
+          </button>
         </div>
         <div className="grid grid-cols-3 gap-8 justify-items-center">
           {filteredReviews && filteredReviews.length > 0 ? (

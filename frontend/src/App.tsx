@@ -16,6 +16,7 @@ import ReviewDetail from './components/ReviewDetail';
 import EditProfile from './components/EditProfile';
 import BarcodeScanPage from './pages/BarcodeScanPage';
 import ReviewEdit from './components/ReviewEdit';
+import RecommendPage from './pages/RecommendPage';
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -38,6 +39,10 @@ function App() {
           element={user ? <MyPage /> : <Navigate to="/" />}
         />
         <Route path="/mypage/edit" element={<EditProfile />} />
+        <Route
+          path="/recommend"
+          element={user ? <RecommendPage /> : <Navigate to="/" />}
+        />
         <Route path="/barcode" element={<BarcodeScanPage />} />/
         <Route path="/isbn" element={<IsbnInputPage />} />
         <Route path="/my-review/:isbn" element={<ReviewCreatePage />} />
