@@ -146,7 +146,7 @@ const ReviewDetail = () => {
             {new Date(review.created_at).toLocaleDateString('ko-KR')}
           </p>
         </div>
-        <div className="bg-white rounded-md p-2 flex-1">
+        <div className="bg-white rounded-md p-2 flex-1 whitespace-pre-wrap">
           <p>{review.memo}</p>
         </div>
       </div>
