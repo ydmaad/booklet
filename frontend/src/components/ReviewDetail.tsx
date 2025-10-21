@@ -9,6 +9,7 @@ import type { Review } from '../types/book.types';
 interface ReviewWithProfile extends Review {
   profiles: {
     nickname: string;
+    avatar_url: string;
   };
 }
 
@@ -21,7 +22,7 @@ const ReviewDetail = () => {
     const fetchReview = async () => {
       const { data, error } = await supabase
         .from('book_reviews')
-        .select('*, profiles(nickname)')
+        .select('*, profiles(nickname,avatar_url)')
         .eq('id', id)
         .single();
 
@@ -133,7 +134,7 @@ const ReviewDetail = () => {
       <div className="flex flex-row bg-gray-200 p-5 rounded-md">
         <div className="flex-shrink-0">
           <img
-            src="/default_image.jpg"
+            src={review.profiles.avatar_url || '/default_image.jpg'}
             alt=""
             className="w-20 h-20 rounded-full object-cover mr-5"
           />

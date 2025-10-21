@@ -19,7 +19,7 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  whitelist: ['auth', 'reviews'], // auth 상태만 저장 (원하는 reducer만 선택 가능)
+  whitelist: ['auth'], // auth 상태만 저장 (원하는 reducer만 선택 가능)
 };
 
 // Root Reducer
