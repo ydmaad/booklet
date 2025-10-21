@@ -32,14 +32,14 @@ const MyPage = () => {
   return (
     <div className="flex flex-row justify-start mt-20">
       <div className="flex flex-col items-center mx-10">
-        <p className="text-3xl font-bold">내 서재</p>
+        <p className="text-3xl font-bold text-brand-title">내 서재</p>
         <img
           src={profile?.avatar_url || '/devualt_image.jpg'}
           alt=""
           className="w-52 h-52 object-cover rounded-full my-10"
         />
         <div className="flex flex-row">
-          <p className="text-xl font-bold mr-1">{profile?.nickname}</p>
+          <p className="text-xl font-bold mr-1 text-brand-button">{profile?.nickname}</p>
           <FiEdit
             onClick={() => navigate('/mypage/edit')}
             className="w-4 h-4 cursor-pointer mt-1 text-gray-500"

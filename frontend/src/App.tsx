@@ -29,7 +29,7 @@ function App() {
   }, [dispatch]);
 
   return (
-    <div className="max-w-[1200px] mx-auto">
+    <div className="max-w-[1200px] mx-auto bg-brand-cream">
       <Header />
       <Routes>
         <Route path="/" element={<MainPage />} />
