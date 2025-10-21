@@ -139,7 +139,7 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <p className="text-5xl font-bold text-brand-title">회원가입</p>
         {/* 폼 */}
@@ -163,7 +163,7 @@ const RegisterPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleEmailCheck}
-                  className="px-4 py-2.5 bg-brand-button text-white text-sm rounded hover:bg-gray-800 transition-colors whitespace-nowrap"
+                  className="px-4 py-2.5 bg-brand-button text-white text-sm rounded hover:bg-brand-button/75 transition-colors whitespace-nowrap"
                 >
                   중복 확인
                 </button>
@@ -188,7 +188,7 @@ const RegisterPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleNicknameCheck}
-                  className="px-4 py-2.5 bg-brand-button text-white text-sm rounded hover:bg-gray-800 transition-colors whitespace-nowrap"
+                  className="px-4 py-2.5 bg-brand-button text-white text-sm rounded hover:bg-brand-button/75 transition-colors whitespace-nowrap"
                 >
                   중복 확인
                 </button>
@@ -239,7 +239,7 @@ const RegisterPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 bg-brand-button text-white rounded hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="w-full py-3 px-4 bg-brand-button text-white rounded hover:bg-brand-button/75 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {loading ? '처리 중...' : '회원가입'}
           </button>

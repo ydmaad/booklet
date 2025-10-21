@@ -28,8 +28,11 @@ const Header = () => {
       <nav className="flex flex-row gap-3">
         {user ? (
           <div className="flex justify-center items-center">
-            <span className="text-lg font-bold text-brand-button">
-              {profile?.nickname} 님
+            <span className="text-lg">
+              <span className="font-bold text-brand-button">
+                {profile?.nickname}
+              </span>
+              <span className="text-black"> 님</span>
             </span>
             <Link to="/mypage" className="text-lg ml-5">
               마이페이지
