@@ -26,7 +26,10 @@ const BestsellerList = () => {
     dispatch(fetchBooksStart());
     const fetchBooks = async () => {
       try {
-        const url = `${API_URL.replace(/\/$/, '')}/api/books/list?queryType=Bestseller`;
+        const url = `${API_URL.replace(
+          /\/$/,
+          ''
+        )}/api/books/list?queryType=Bestseller`;
         const response = await axios.get(url);
         dispatch(fetchBooksSuccess(response.data));
       } catch (error) {
@@ -42,7 +45,9 @@ const BestsellerList = () => {
   return (
     <div className="w-full mx-auto">
       <div className="text-center mx-auto mt-16">
-        <h1 className="text-3xl font-bold text-gray-700 py-6">추천 도서</h1>
+        <h1 className="text-3xl font-bold text-gray-700 py-6">
+          주간 베스트 셀러
+        </h1>
       </div>
       <Swiper
         slidesPerView={5}
