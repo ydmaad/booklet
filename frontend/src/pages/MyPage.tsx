@@ -48,8 +48,8 @@ const MyPage = () => {
         <p className="text-base font-bold underline text-gray-500">
           {profile?.email}
         </p>
-        <div className="border flex flex-1 flex-col w-full p-5 rounded-lg mt-5">
-          <p className="text-base font-bold">나의 키워드</p>
+        <div className="border flex flex-1 flex-col w-full p-5 rounded-lg mt-5 bg-white shadow-md">
+          <p className="text-base font-bold">🏷️ 나의 키워드</p>
           <div className="mb-6">
             {profile?.keywords && profile.keywords.length > 0 ? (
               profile?.keywords?.map((word, index) => (
@@ -61,7 +61,7 @@ const MyPage = () => {
               <span>나의 독서 키워드를 작성해주세요!</span>
             )}
           </div>
-          <p className="text-base font-bold">한 줄 소개</p>
+          <p className="text-base font-bold">✨ 한 줄 소개</p>
           <p>{profile?.bio || '한 줄 소개를 작성해주세요!'}</p>
         </div>
       </div>

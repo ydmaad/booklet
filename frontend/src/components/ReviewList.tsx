@@ -79,7 +79,7 @@ const ReviewList = () => {
           className={`px-3 py-1.5 rounded-full text-sm transition-all duration-200 
             ${
               startPage === 1
-                ? 'text-gray-400 cursor-not-allowed bg-gray-100'
+                ? 'text-gray-400 cursor-not-allowed bg-white'
                 : 'text-gray-700 hover:bg-gray-200'
             }`}
         >
@@ -99,7 +99,7 @@ const ReviewList = () => {
                   ${
                     currentPage === pageNum
                       ? 'bg-[#245A48] text-white shadow-md scale-105'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      : 'text-gray-700 hover:bg-white'
                   }`}
             >
               {pageNum}
@@ -114,7 +114,7 @@ const ReviewList = () => {
           className={`px-3 py-1.5 rounded-full text-sm transition-all duration-200 
             ${
               endPage === totalPages
-                ? 'text-gray-400 cursor-not-allowed bg-gray-100'
+                ? 'text-gray-400 cursor-not-allowed bg-white'
                 : 'text-gray-700 hover:bg-gray-200'
             }`}
         >

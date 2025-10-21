@@ -30,33 +30,35 @@ function App() {
   }, [dispatch]);
 
   return (
-    <div className="max-w-[1200px] mx-auto">
-      <Header />
-      <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route
-          path="/mypage"
-          element={user ? <MyPage /> : <Navigate to="/" />}
-        />
-        <Route path="/mypage/edit" element={<EditProfile />} />
-        <Route
-          path="/recommend"
-          element={user ? <RecommendPage /> : <Navigate to="/" />}
-        />
-        <Route path="/barcode" element={<BarcodeScanPage />} />/
-        <Route path="/isbn" element={<IsbnInputPage />} />
-        <Route path="/my-review/:isbn" element={<ReviewCreatePage />} />
-        <Route path="/review/:id" element={<ReviewDetail />} />
-        <Route path="/review/edit/:id" element={<ReviewEdit />} />
-        <Route
-          path="/login"
-          element={user ? <Navigate to="/" /> : <LoginPage />}
-        />
-        <Route
-          path="/register"
-          element={user ? <Navigate to="/" /> : <RegisterPage />}
-        />
-      </Routes>
+    <div className="flex flex-col min-h-screen">
+      <div className="max-w-[1200px] mx-auto flex-1 w-full">
+        <Header />
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route
+            path="/mypage"
+            element={user ? <MyPage /> : <Navigate to="/" />}
+          />
+          <Route path="/mypage/edit" element={<EditProfile />} />
+          <Route
+            path="/recommend"
+            element={user ? <RecommendPage /> : <Navigate to="/" />}
+          />
+          <Route path="/barcode" element={<BarcodeScanPage />} />/
+          <Route path="/isbn" element={<IsbnInputPage />} />
+          <Route path="/my-review/:isbn" element={<ReviewCreatePage />} />
+          <Route path="/review/:id" element={<ReviewDetail />} />
+          <Route path="/review/edit/:id" element={<ReviewEdit />} />
+          <Route
+            path="/login"
+            element={user ? <Navigate to="/" /> : <LoginPage />}
+          />
+          <Route
+            path="/register"
+            element={user ? <Navigate to="/" /> : <RegisterPage />}
+          />
+        </Routes>
+      </div>
       <Footer />
     </div>
   );

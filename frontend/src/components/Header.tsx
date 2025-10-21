@@ -1,7 +1,7 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../store/slices/authSlice";
-import type { RootState, AppDispatch } from "../store/store";
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../store/slices/authSlice';
+import type { RootState, AppDispatch } from '../store/store';
 
 const Header = () => {
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -13,13 +13,13 @@ const Header = () => {
 
   const handleLogout = async () => {
     await dispatch(logout());
-    navigate("/");
+    navigate('/');
   };
 
   return (
-    <header className="flex justify-between bg-white py-3">
+    <header className="flex justify-between py-3">
       <div
-        onClick={() => navigate("/")}
+        onClick={() => navigate('/')}
         className="text-xl font-bold cursor-pointer"
       >
         <img src="/title.png" alt="title" className="h-14" />
@@ -28,7 +28,9 @@ const Header = () => {
       <nav className="flex flex-row gap-3">
         {user ? (
           <div className="flex justify-center items-center">
-            <span className="text-lg font-bold text-brand-button">{profile?.nickname} 님</span>
+            <span className="text-lg font-bold text-brand-button">
+              {profile?.nickname} 님
+            </span>
             <Link to="/mypage" className="text-lg ml-5">
               마이페이지
             </Link>
