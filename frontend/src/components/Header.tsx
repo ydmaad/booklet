@@ -17,7 +17,7 @@ const Header = () => {
   };
 
   return (
-    <header className="flex justify-between bg-white py-3">
+    <header className="flex justify-between py-3">
       <div
         onClick={() => navigate("/")}
         className="text-xl font-bold cursor-pointer"
@@ -28,7 +28,10 @@ const Header = () => {
       <nav className="flex flex-row gap-3">
         {user ? (
           <div className="flex justify-center items-center">
-            <span className="text-lg font-bold text-brand-button">{profile?.nickname} 님</span>
+            <span className="text-lg">
+              <span className="font-bold text-brand-button">{profile?.nickname}</span>
+              <span className="text-black"> 님</span>
+            </span>
             <Link to="/mypage" className="text-lg ml-5">
               마이페이지
             </Link>

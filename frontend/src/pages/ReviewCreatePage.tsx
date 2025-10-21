@@ -107,7 +107,7 @@ const ReviewCreatePage = () => {
     <div>
       <div className="flex flex-col items-center text-center  py-10">
         <IoBookOutline className="w-28 h-28" />
-        <p className="text-5xl font-bold">Book Review</p>
+        <p className="text-5xl font-bold text-brand-title">Book Review</p>
         <p className="text-2xl font-semibold text-gray-500">
           내가 읽은 책의 느낀점, 인상깊은 문장, 새로 알게된 정보 등을 작성하세요
         </p>
@@ -194,14 +194,14 @@ const ReviewCreatePage = () => {
       <div className="flex flex-row gap-10 items-center justify-center mb-40">
         <button
           onClick={() => navigate('/')}
-          className="bg-indigo-200 text-gray-600 text-xl text-center w-[130px] py-3 rounded-lg shadow-lg shadow-indigo-500/50 hover:bg-indigo-300 transition-colors duration-200"
+          className="bg-white text-gray-600 text-xl text-center w-[130px] py-3 rounded-lg shadow-lg shadow-gray-400 hover:bg-gray-200 transition-colors duration-200"
         >
           취소
         </button>
         <button
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="bg-indigo-500 text-white text-xl text-center w-[130px] py-3 rounded-lg shadow-lg shadow-indigo-500/50 hover:bg-indigo-600 transition-colors duration-200"
+          className="bg-brand-button text-white text-xl text-center w-[130px] py-3 rounded-lg shadow-lg shadow-brand-button/50 hover:bg-brand-button/75 transition-colors duration-200"
         >
           {isSubmitting ? '저장 중...' : '확인'}
         </button>

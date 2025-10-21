@@ -257,9 +257,9 @@ const EditProfile = () => {
   } 
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold text-center mb-8">내 정보 수정</h1>
+    <div className="min-h-screen py-8 px-4">
+      <div className="max-w-md mx-auto rounded-lg p-6">
+        <h1 className="text-3xl font-bold text-center mb-8 text-brand-title">내 정보 수정</h1>
 
         {/* 프로필 이미지 */}
         <div className="flex flex-col items-center mb-8">
@@ -309,7 +309,7 @@ const EditProfile = () => {
             <button
               onClick={handleCheckNickname}
               disabled={nicknameChecking || loading}
-              className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 disabled:bg-gray-400 transition whitespace-nowrap text-sm"
+              className="bg-brand-button text-white px-4 py-2 rounded hover:bg-gray-900 disabled:bg-gray-400 transition whitespace-nowrap text-sm"
             >
               {nicknameChecking ? '확인중...' : '중복 확인'}
             </button>
@@ -433,14 +433,14 @@ const EditProfile = () => {
           <button
             onClick={() => navigate('/mypage')}
             disabled={loading}
-            className="flex-1 bg-white border border-gray-300 text-gray-700 py-3 rounded hover:bg-gray-50 disabled:opacity-50 transition font-medium"
+            className="flex-1 bg-white border border-gray-300 text-gray-700 py-3 rounded hover:bg-gray-100 disabled:opacity-50 transition font-medium"
           >
             취소
           </button>
           <button
             onClick={handleSave}
             disabled={loading}
-            className="flex-1 bg-purple-600 text-white py-3 rounded hover:bg-purple-700 disabled:opacity-50 transition font-medium"
+            className="flex-1 bg-brand-button text-white py-3 rounded hover:bg-brand-button/75 disabled:opacity-50 transition font-medium"
           >
             {loading ? '저장중...' : '저장'}
           </button>
