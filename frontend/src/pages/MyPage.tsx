@@ -48,8 +48,8 @@ const MyPage = () => {
         <p className="text-base font-bold underline text-gray-500">
           {profile?.email}
         </p>
-        <div className="border flex flex-1 flex-col w-full p-5 rounded-lg mt-5">
-          <p className="text-base font-bold">나의 키워드</p>
+        <div className="border flex flex-1 flex-col w-full p-5 rounded-lg mt-5 bg-white shadow-md">
+          <p className="text-base font-bold">🏷️ 나의 키워드</p>
           <div className="mb-6">
             {profile?.keywords && profile.keywords.length > 0 ? (
               profile?.keywords?.map((word, index) => (
@@ -61,7 +61,7 @@ const MyPage = () => {
               <span>나의 독서 키워드를 작성해주세요!</span>
             )}
           </div>
-          <p className="text-base font-bold">한 줄 소개</p>
+          <p className="text-base font-bold">✨ 한 줄 소개</p>
           <p>{profile?.bio || '한 줄 소개를 작성해주세요!'}</p>
         </div>
       </div>
@@ -79,6 +79,13 @@ const MyPage = () => {
         <div className="flex justify-end mb-3 mr-5">
           <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
             <LuShare className="w-6 h-6 text-gray-600 hover:text-blue-500" />
+          </button>
+
+          <button
+            onClick={() => navigate('/recommend')}
+            className="px-4 py-2 bg-[#245A48] text-white rounded-full hover:bg-[#317C61] transition-colors"
+          >
+            ✨ AI 추천받기
           </button>
         </div>
         <div className="grid grid-cols-3 gap-8 justify-items-center">
