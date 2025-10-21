@@ -59,7 +59,7 @@ const RecommendPage = () => {
   }
 
   return (
-    <div className="mt-20 mx-10">
+    <div className="mt-20 mx-40">
       <h1 className="text-3xl font-bold mb-2">✨ AI 책 추천</h1>
       <p className="text-xl text-gray-600 mb-8">
         내가 읽은 책을 기반으로 AI가 추천해드려요 📚
