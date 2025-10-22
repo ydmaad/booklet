@@ -1,12 +1,21 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+// 👇 디버깅용 (나중에 삭제)
+// console.log('🔑 API Keys Check:');
+// console.log('OPENAI_API_KEY:', process.env.OPENAI_API_KEY ? '✅ 있음' : '❌ 없음');
+// console.log('TTB_KEY:', process.env.TTB_KEY ? '✅ 있음' : '❌ 없음');
+// console.log('---');
+
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import axios from 'axios';
 import type { Request, Response } from 'express';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
+import chatRouter from "./routes/chat.js";
 
-dotenv.config();
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -26,6 +35,9 @@ app.use(express.json());
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: '서버 작동중!' });
 });
+
+// 👇 채팅 라우트 추가!
+app.use("/api/chat", chatRouter);
 
 // 베스트 셀러 리스트 API
 app.get('/api/books/list', async (req: Request, res: Response) => {
