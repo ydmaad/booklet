@@ -39,7 +39,9 @@ const MyPage = () => {
           className="w-52 h-52 object-cover rounded-full my-10"
         />
         <div className="flex flex-row">
-          <p className="text-xl font-bold mr-1 text-brand-button">{profile?.nickname}</p>
+          <p className="text-xl font-bold mr-1 text-brand-button">
+            {profile?.nickname}
+          </p>
           <FiEdit
             onClick={() => navigate('/mypage/edit')}
             className="w-4 h-4 cursor-pointer mt-1 text-gray-500"
@@ -76,9 +78,10 @@ const MyPage = () => {
             className="flex-1 outline-none text-sm"
           />
         </div>
-        <div className="flex justify-end mb-3 mr-5">
-          <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-            <LuShare className="w-6 h-6 text-gray-600 hover:text-blue-500" />
+        <div className="flex justify-end mb-3 mr-5 space-x-2">
+          <button className="flex items-center px-3 py-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
+            <LuShare className="w-5 h-5 text-[#317C61] mr-1" />
+            <span className="text-sm text-[#317C61]">공유하기</span>
           </button>
 
           <button
