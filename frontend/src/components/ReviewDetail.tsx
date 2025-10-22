@@ -5,6 +5,8 @@ import { FiTrash2 } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import type { Review } from '../types/book.types';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../store/store';
 
 interface ReviewWithProfile extends Review {
   profiles: {
@@ -17,6 +19,7 @@ const ReviewDetail = () => {
   const { id } = useParams();
   const [review, setReview] = useState<ReviewWithProfile | null>(null);
   const navigate = useNavigate();
+  const currentUser = useSelector((state: RootState) => state.auth.user);
 
   useEffect(() => {
     const fetchReview = async () => {
@@ -29,12 +32,19 @@ const ReviewDetail = () => {
       if (error) console.error(error);
       else setReview(data);
 
-      console.log(data);
+      // console.log(data);
     };
     fetchReview();
   }, [id]);
 
+  const isAuthor = review?.user_id === currentUser?.id;
+
   const handleDelete = async () => {
+    if (!isAuthor) {
+      alert('작성자가 아닙니다!');
+      return;
+    }
+
     if (window.confirm('정말 삭제하시겠습니까?')) {
       const { error } = await supabase
         .from('book_reviews')
@@ -56,6 +66,14 @@ const ReviewDetail = () => {
       </div>
     );
   }
+
+  const handleEdit = () => {
+    if (!isAuthor) {
+      alert('작성자만 수정할 수 있습니다!');
+      return;
+    }
+    navigate(`/review/edit/${id}`);
+  };
 
   return (
     <div className="my-20 mx-40">
@@ -122,13 +140,15 @@ const ReviewDetail = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-row gap-3 text-brand-button">
-          <FiEdit
-            onClick={() => navigate(`/review/edit/${id}`)}
-            className="w-6 h-6 cursor-pointer"
-          />
-          <FiTrash2 onClick={handleDelete} className="w-6 h-6 cursor-pointer" />
-        </div>
+        {isAuthor && (
+          <div className="flex flex-row gap-3 text-brand-button">
+            <FiEdit onClick={handleEdit} className="w-6 h-6 cursor-pointer" />
+            <FiTrash2
+              onClick={handleDelete}
+              className="w-6 h-6 cursor-pointer"
+            />
+          </div>
+        )}
       </div>
       <div className="border-t my-10 border-gray-300"></div>
       <div className="flex flex-row bg-gray-200 p-5 rounded-md">
