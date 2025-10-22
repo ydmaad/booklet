@@ -20,7 +20,6 @@ const ReviewDetail = () => {
   const [review, setReview] = useState<ReviewWithProfile | null>(null);
   const navigate = useNavigate();
   const currentUser = useSelector((state: RootState) => state.auth.user);
-  console.log(currentUser?.id);
 
   useEffect(() => {
     const fetchReview = async () => {
@@ -33,7 +32,7 @@ const ReviewDetail = () => {
       if (error) console.error(error);
       else setReview(data);
 
-      console.log(data);
+      // console.log(data);
     };
     fetchReview();
   }, [id]);
