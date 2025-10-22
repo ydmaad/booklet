@@ -82,7 +82,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ bookInfo, selectedText }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen max-w-4xl mx-auto bg-[#F5F4EC]">
+    <div className="flex flex-col h-full bg-white rounded-lg overflow-hidden">
       {/* 헤더 */}
       <BookInfoHeader
         bookTitle={bookInfo.title}
