@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchProfile, updateProfile, updatePassword, softDeleteAccount } from '../store/slices/authSlice';
+import {
+  fetchProfile,
+  updateProfile,
+  updatePassword,
+  softDeleteAccount,
+} from '../store/slices/authSlice';
 import { supabase } from '../lib/supabaseClient';
 import { User } from 'lucide-react';
 
 const EditProfile = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  
+
   const { user, profile, loading } = useAppSelector((state) => state.auth);
 
   const [nickname, setNickname] = useState('');
@@ -17,12 +22,14 @@ const EditProfile = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
-  
+
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  
+
   const [nicknameChecking, setNicknameChecking] = useState(false);
-  const [nicknameAvailable, setNicknameAvailable] = useState<boolean | null>(null);
+  const [nicknameAvailable, setNicknameAvailable] = useState<boolean | null>(
+    null
+  );
   const [originalNickname, setOriginalNickname] = useState('');
 
   // 로그인 확인
@@ -141,9 +148,7 @@ const EditProfile = () => {
       }
 
       // Public URL 생성
-      const { data } = supabase.storage
-        .from('profiles')
-        .getPublicUrl(filePath);
+      const { data } = supabase.storage.from('profiles').getPublicUrl(filePath);
 
       return data.publicUrl;
     } catch (error) {
@@ -185,7 +190,9 @@ const EditProfile = () => {
     try {
       // 1. 비밀번호 변경 (입력했다면)
       if (currentPassword && newPassword) {
-        await dispatch(updatePassword({ currentPassword, newPassword })).unwrap();
+        await dispatch(
+          updatePassword({ currentPassword, newPassword })
+        ).unwrap();
       }
 
       // 2. 이미지 업로드
@@ -236,7 +243,9 @@ const EditProfile = () => {
 
     try {
       await dispatch(softDeleteAccount(user.id)).unwrap();
-      alert('회원탈퇴가 완료되었습니다.\n30일 이내 재로그인 시 계정을 복구할 수 있습니다.');
+      alert(
+        '회원탈퇴가 완료되었습니다.\n30일 이내 재로그인 시 계정을 복구할 수 있습니다.'
+      );
       navigate('/');
     } catch (error: any) {
       console.error('탈퇴 에러:', error);
@@ -254,12 +263,14 @@ const EditProfile = () => {
         </div>
       </div>
     );
-  } 
+  }
 
   return (
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-md mx-auto rounded-lg p-6">
-        <h1 className="text-3xl font-bold text-center mb-8 text-brand-title">내 정보 수정</h1>
+        <h1 className="text-3xl font-bold text-center mb-8 text-brand-title">
+          내 정보 수정
+        </h1>
 
         {/* 프로필 이미지 */}
         <div className="flex flex-col items-center mb-8">
@@ -284,9 +295,7 @@ const EditProfile = () => {
               disabled={loading}
             />
           </label>
-          <p className="text-xs text-gray-500 mt-2">
-            JPG, PNG, GIF (최대 2MB)
-          </p>
+          <p className="text-xs text-gray-500 mt-2">JPG, PNG, GIF (최대 2MB)</p>
         </div>
 
         {/* 닉네임 */}
@@ -309,7 +318,7 @@ const EditProfile = () => {
             <button
               onClick={handleCheckNickname}
               disabled={nicknameChecking || loading}
-              className="bg-brand-button text-white px-4 py-2 rounded hover:bg-gray-900 disabled:bg-gray-400 transition whitespace-nowrap text-sm"
+              className="bg-brand-button text-white px-4 py-2 rounded hover:bg-brand-button/75 disabled:bg-gray-400 transition whitespace-nowrap text-sm"
             >
               {nicknameChecking ? '확인중...' : '중복 확인'}
             </button>
@@ -331,7 +340,7 @@ const EditProfile = () => {
           <h3 className="text-sm font-semibold text-gray-700 mb-3">
             비밀번호 변경 (선택사항)
           </h3>
-          
+
           {/* 현재 비밀번호 */}
           <div className="mb-3">
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -375,18 +384,22 @@ const EditProfile = () => {
               disabled={loading}
               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100 text-sm"
             />
-            {newPassword && newPasswordConfirm && newPassword !== newPasswordConfirm && (
-              <p className="text-sm text-red-600 mt-1">
-                ✗ 비밀번호가 일치하지 않습니다
-              </p>
-            )}
-            {newPassword && newPasswordConfirm && newPassword === newPasswordConfirm && (
-              <p className="text-sm text-green-600 mt-1">
-                ✓ 비밀번호가 일치합니다
-              </p>
-            )}
+            {newPassword &&
+              newPasswordConfirm &&
+              newPassword !== newPasswordConfirm && (
+                <p className="text-sm text-red-600 mt-1">
+                  ✗ 비밀번호가 일치하지 않습니다
+                </p>
+              )}
+            {newPassword &&
+              newPasswordConfirm &&
+              newPassword === newPasswordConfirm && (
+                <p className="text-sm text-green-600 mt-1">
+                  ✓ 비밀번호가 일치합니다
+                </p>
+              )}
           </div>
-          
+
           <p className="text-xs text-gray-500 mt-2">
             💡 비밀번호를 변경하지 않으려면 비워두세요
           </p>
@@ -423,9 +436,7 @@ const EditProfile = () => {
             rows={3}
             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100 resize-none"
           />
-          <p className="text-xs text-gray-500 mt-1">
-            최대 200자
-          </p>
+          <p className="text-xs text-gray-500 mt-1">최대 200자</p>
         </div>
 
         {/* 버튼들 */}
@@ -461,19 +472,19 @@ const EditProfile = () => {
             💡 <strong>회원탈퇴 안내</strong>
           </p>
           <p className="text-xs text-yellow-700 mt-2">
-            탈퇴 후 30일 이내에 재로그인하면 계정을 복구할 수 있습니다.
-            30일이 지나면 모든 데이터가 영구적으로 삭제됩니다.
+            탈퇴 후 30일 이내에 재로그인하면 계정을 복구할 수 있습니다. 30일이
+            지나면 모든 데이터가 영구적으로 삭제됩니다.
           </p>
         </div>
       </div>
     </div>
   );
-  
+
   // return (
   //   <div className="flex justify-center my-20">
   //     <div className="flex flex-col items-center w-1/4">
   //       <p className="text-3xl font-bold mb-8">내 정보 수정</p>
-        
+
   //       <div className="flex flex-col justify-center items-center mb-10">
   //         <div className="w-32 h-32 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden mb-4 border-4 border-white shadow-lg">
   //           {previewUrl ? (
@@ -500,7 +511,7 @@ const EditProfile = () => {
   //           JPG, PNG, GIF (최대 2MB)
   //         </p>
   //       </div>
-        
+
   //       <div className="flex flex-col w-full mb-5">
   //         <p className="block text-sm font-medium text-gray-700 mb-2">
   //           닉네임 <span className="text-red-500">*</span>
@@ -517,7 +528,7 @@ const EditProfile = () => {
   //             disabled={loading}
   //             className="border rounded-md px-2 py-1 flex-1 mr-1"
   //           />
-  //           <button 
+  //           <button
   //             onClick={handleCheckNickname}
   //             disabled={nicknameChecking || loading}
   //             className="w-24 flex-shrink-0 border text-sm text-white bg-gray-700 rounded-lg py-1"
