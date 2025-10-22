@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { sendChatMessage, type BookInfo, type ChatMessage } from '../../lib/chatApi';
 import BookInfoHeader from './BookInfoHeader';
+import QuickActions from './QuickActions';
 import MessageBubble from './MessageBubble';
 import ChatInput from './ChatInput';
 import LoadingIndicator from './LoadingIndicator';
@@ -89,6 +90,12 @@ const ChatBot: React.FC<ChatBotProps> = ({ bookInfo, selectedText }) => {
         author={bookInfo.author}
         currentPage={bookInfo.currentPage}
         currentChapter={bookInfo.currentChapter}
+      />
+
+      {/* 퀵 액션 버튼 */}
+      <QuickActions 
+        onQuickMessage={handleSendMessage}
+        bookTitle={bookInfo.title}
       />
 
       {/* 메시지 영역 */}
