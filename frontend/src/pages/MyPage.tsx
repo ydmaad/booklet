@@ -32,7 +32,7 @@ const MyPage = () => {
       <div className="flex flex-col items-center mx-10">
         <p className="text-3xl font-bold text-brand-title">내 서재</p>
         <img
-          src={profile?.avatar_url || '/devualt_image.jpg'}
+          src={profile?.avatar_url || '/default_image.jpg'}
           alt=""
           className="w-52 h-52 object-cover rounded-full my-10"
         />
@@ -97,7 +97,9 @@ const MyPage = () => {
           ) : (
             <div className="col-span-3 flex justify-center">
               <p className="text-center text-gray-500 mt-10">
-                검색 결과가 없습니다 😢
+                {searchTerm
+                  ? '검색 결과가 없습니다 😢'
+                  : '아직 읽은 책이 없습니다 📚'}
               </p>
             </div>
           )}
