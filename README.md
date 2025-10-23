@@ -206,7 +206,21 @@ npm run dev
 
 ## 🖼️ 미리보기 (Preview)
 
-> (배포 후 링크 및 스크린샷 추가 예정)
+### 메인 페이지
+
+<img src="./frontend/public/preview/로그인.png" width="30%" />
+<img src="./frontend/public/preview/회원가입.png" width="30%" />
+<img src="./frontend/public/preview/메인페이지.png" width="30%" />
+<img src="./frontend/public/preview/챗봇.png" width="30%" />
+<img src="./frontend/public/preview/바코드스캔.png" width="30%" />
+<img src="./frontend/public/preview/리뷰작성.png" width="30%" />
+<img src="./frontend/public/preview/리뷰.png" width="30%" />
+<img src="./frontend/public/preview/마이페이지.png" width="30%" />
+<img src="./frontend/public/preview/내정보수정.png" width="30%" />
+<img src="./frontend/public/preview/ai책추천.png" width="30%" />
+
+<br>
+<br>
 
 🔗 [배포 링크](http://13.125.224.194)
 
