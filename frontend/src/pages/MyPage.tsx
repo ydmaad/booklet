@@ -12,9 +12,7 @@ const MyPage = () => {
   const { user, profile } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { myReviews, _loading } = useSelector(
-    (state: RootState) => state.reviews
-  );
+  const { myReviews } = useSelector((state: RootState) => state.reviews);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
