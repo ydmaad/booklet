@@ -1,8 +1,5 @@
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+import 'dotenv/config';
+import { OpenAI } from 'openai';
 
 interface BookInfo {
   title: string;
@@ -17,10 +14,19 @@ interface ChatMessage {
   content: string;
 }
 
+function getOpenAI() {
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+}
+
 /**
  * 시스템 프롬프트 생성
  */
-function generateSystemPrompt(bookInfo: BookInfo, selectedText?: string): string {
+function generateSystemPrompt(
+  bookInfo: BookInfo,
+  selectedText?: string
+): string {
   return `당신은 '별책부록' 앱의 AI 독서 도우미입니다.
 
 ## 현재 독서 정보
@@ -61,12 +67,13 @@ export async function getChatResponse(
   conversationHistory: ChatMessage[] = []
 ): Promise<string> {
   try {
+    const openai = getOpenAI();
     const systemPrompt = generateSystemPrompt(bookInfo, selectedText);
-    
+
     const messages: ChatMessage[] = [
       { role: 'system', content: systemPrompt },
       ...conversationHistory,
-      { role: 'user', content: userMessage }
+      { role: 'user', content: userMessage },
     ];
 
     const response = await openai.chat.completions.create({
@@ -75,10 +82,12 @@ export async function getChatResponse(
       temperature: 0.7,
       max_tokens: 500,
       presence_penalty: 0.6,
-      frequency_penalty: 0.3
+      frequency_penalty: 0.3,
     });
 
-    return response.choices[0]?.message?.content || '응답을 생성할 수 없습니다.';
+    return (
+      response.choices[0]?.message?.content || '응답을 생성할 수 없습니다.'
+    );
   } catch (error) {
     console.error('OpenAI API Error:', error);
     throw new Error('AI 응답을 가져오는데 실패했습니다.');
@@ -92,11 +101,11 @@ export function limitConversationHistory(
   history: ChatMessage[],
   maxMessages: number = 10
 ): ChatMessage[] {
-  const nonSystemMessages = history.filter(msg => msg.role !== 'system');
-  
+  const nonSystemMessages = history.filter((msg) => msg.role !== 'system');
+
   if (nonSystemMessages.length <= maxMessages) {
     return history;
   }
-  
+
   return nonSystemMessages.slice(-maxMessages);
 }

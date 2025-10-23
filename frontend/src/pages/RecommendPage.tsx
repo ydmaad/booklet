@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store/store';
 
@@ -15,20 +15,29 @@ interface BookRecommendation {
 
 const RecommendPage = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [_error, setError] = useState<string>('');
   const [recommendations, setRecommendations] = useState<BookRecommendation[]>(
     []
   );
+  const hasFetched = useRef(false);
+  const { myReviews } = useSelector((state: RootState) => state.reviews);
 
   useEffect(() => {
-    fetchRecommendations();
-    // eslint-disable-next-line
-  }, []);
+    if (hasFetched.current) return;
+
+    if (user?.id) {
+      hasFetched.current = true;
+      fetchRecommendations();
+    }
+  }, [user?.id]);
 
   const fetchRecommendations = async () => {
-    if (!user?.id) return;
+    if (!user?.id || isLoading) return;
 
     setIsLoading(true);
+    setError('');
+
     try {
       const response = await fetch(
         'http://localhost:3000/api/books/recommend',
@@ -41,10 +50,20 @@ const RecommendPage = () => {
         }
       );
 
+      if (!response.ok) {
+        throw new Error('추천을 불러오는데 실패했습니다.');
+      }
+
       const data = await response.json();
-      setRecommendations(data.recommendations);
+
+      if (data.message && !data.recommendations) {
+        setError(data.message);
+      } else {
+        setRecommendations(data.recommendations || []);
+      }
     } catch (error) {
-      console.error('추천 에러:', error);
+      console.error('추천 에러', error);
+      setError('책 추천을 불러오는 중 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);
     }
@@ -62,9 +81,11 @@ const RecommendPage = () => {
     <div className="mt-20 mx-40">
       <h1 className="text-3xl font-bold mb-2">✨ AI 책 추천</h1>
       <p className="text-xl text-gray-600 mb-8">
-        내가 읽은 책을 기반으로 AI가 추천해드려요 📚
+        {myReviews && myReviews.length > 0
+          ? '내가 읽은 책을 기반으로 AI가 추천해드려요 📚'
+          : 'AI가 당신을 위한 책을 추천해드려요 📚'}
       </p>
-      {/* TODO: 추천 카드 리스트 */}
+
       <div className="space-y-4">
         {recommendations.map((book) => (
           <div
