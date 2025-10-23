@@ -206,8 +206,6 @@ npm run dev
 
 ## 🖼️ 미리보기 (Preview)
 
-### 메인 페이지
-
 <div>
 <img src="./frontend/public/preview/로그인.png" width="30%" />
 <img src="./frontend/public/preview/회원가입.png" width="30%" />
