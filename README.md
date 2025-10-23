@@ -208,16 +208,24 @@ npm run dev
 
 ### 메인 페이지
 
+<div>
 <img src="./frontend/public/preview/로그인.png" width="30%" />
 <img src="./frontend/public/preview/회원가입.png" width="30%" />
 <img src="./frontend/public/preview/메인페이지.png" width="30%" />
+</div>
+<div>
 <img src="./frontend/public/preview/챗봇.png" width="30%" />
 <img src="./frontend/public/preview/바코드스캔.png" width="30%" />
 <img src="./frontend/public/preview/리뷰작성.png" width="30%" />
+</div>
+<div>
 <img src="./frontend/public/preview/리뷰.png" width="30%" />
 <img src="./frontend/public/preview/마이페이지.png" width="30%" />
 <img src="./frontend/public/preview/내정보수정.png" width="30%" />
+</div>
+<div>
 <img src="./frontend/public/preview/ai책추천.png" width="30%" />
+</div>
 
 <br>
 <br>
