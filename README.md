@@ -15,9 +15,9 @@
 <table>
   <thead>
     <tr align="center">
-      <th>양민애</th>
-      <th>문소정</th>
-      <th>류향숙</th>
+      <th>🐶 양민애</th>
+      <th>😸 문소정</th>
+      <th>🐰 류향숙</th>
     </tr>
   </thead>
   <tbody>
@@ -40,14 +40,20 @@
     </tr>
     <tr align="center">
       <td>
-          <img src="" alt="" />
-      </td>
-      <td>
-          <img src="" alt="" />
-      </td>
-      <td>
-          <img src="" alt="" />
-      </td>
+    <span style="display:inline-block; background-color:#4CAF50; color:white; padding:4px 10px; border-radius:12px; font-size:14px;">
+      Frontend
+    </span>
+  </td>
+  <td>
+    <span style="display:inline-block; background-color:#2196F3; color:white; padding:4px 10px; border-radius:12px; font-size:14px;">
+      Data Science
+    </span>
+  </td>
+  <td>
+    <span style="display:inline-block; background-color:#FF9800; color:white; padding:4px 10px; border-radius:12px; font-size:14px;">
+      Member
+    </span>
+  </td>
     </tr>
   </tbody>
 </table>
