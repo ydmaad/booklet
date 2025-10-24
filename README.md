@@ -23,37 +23,14 @@
   <tbody>
     <tr align="center">
       <td>
-        <a href="https://github.com/ydmaad">
-          <img src="https://github.com/ydmaad.png" alt="양민애 GitHub 프로필" width="140px"  />
-        </a>
+        ![Frontend](https://img.shields.io/badge/Frontend-green?style=for-the-badge&logo=react&logoColor=white)
       </td>
       <td>
-        <a href="https://github.com/thwjd639">
-          <img src="https://github.com/thwjd639.png" alt="문소정 GitHub 프로필" width="140px"  />
-        </a>
+        ![Data Science](https://img.shields.io/badge/Data%20Science-blue?style=for-the-badge&logo=python&logoColor=white)
       </td>
       <td>
-        <a href="https://github.com/shootingstarhaha">
-          <img src="https://github.com/shootingstarhaha.png" alt="류향숙 GitHub 프로필" width="140px" />
-        </a>
+        ![Member](https://img.shields.io/badge/Member-orange?style=for-the-badge)
       </td>
-    </tr>
-    <tr align="center">
-      <td>
-    <span style="display:inline-block; background-color:#4CAF50; color:white; padding:4px 10px; border-radius:12px; font-size:14px;">
-      Frontend
-    </span>
-  </td>
-  <td>
-    <span style="display:inline-block; background-color:#2196F3; color:white; padding:4px 10px; border-radius:12px; font-size:14px;">
-      Data Science
-    </span>
-  </td>
-  <td>
-    <span style="display:inline-block; background-color:#FF9800; color:white; padding:4px 10px; border-radius:12px; font-size:14px;">
-      Member
-    </span>
-  </td>
     </tr>
   </tbody>
 </table>
