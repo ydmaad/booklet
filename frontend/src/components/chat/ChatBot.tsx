@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { sendChatMessage, type BookInfo, type ChatMessage } from '../../lib/chatApi';
+import { sendChatMessage, type Message } from '../../lib/chatApi';
+import type { ChatConfig } from '../../types/chat.types';
 import BookInfoHeader from './BookInfoHeader';
 import QuickActions from './QuickActions';
 import MessageBubble from './MessageBubble';
@@ -7,12 +8,11 @@ import ChatInput from './ChatInput';
 import LoadingIndicator from './LoadingIndicator';
 
 interface ChatBotProps {
-  bookInfo: BookInfo;
-  selectedText?: string;
+  config: ChatConfig;
 }
 
-const ChatBot: React.FC<ChatBotProps> = ({ bookInfo, selectedText }) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+const ChatBot: React.FC<ChatBotProps> = ({ config }) => {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -25,12 +25,20 @@ const ChatBot: React.FC<ChatBotProps> = ({ bookInfo, selectedText }) => {
     scrollToBottom();
   }, [messages, isLoading]);
 
-  // 환영 메시지 (처음 한 번만)
+  // 환영 메시지 (처음 한 번만) - context에 맞게 변경!
   useEffect(() => {
     if (messages.length === 0) {
-      const welcomeMessage: ChatMessage = {
+      let welcomeContent = '';
+      
+      if (config.context === 'book-discussion' && config.bookData) {
+        welcomeContent = `안녕하세요! ${config.bookData.title}에 대해 궁금한 점이 있으면 언제든 물어보세요 😊`;
+      } else {
+        welcomeContent = '별책부록 사이트 이용법에 대해 도와드릴게요! 무엇이 궁금하신가요?';
+      }
+
+      const welcomeMessage: Message = {
         role: 'assistant',
-        content: `안녕하세요! ${bookInfo.title}에 대해 궁금한 점이 있으면 언제든 물어보세요 😊`,
+        content: welcomeContent,
         timestamp: new Date().toISOString()
       };
       setMessages([welcomeMessage]);
@@ -40,7 +48,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ bookInfo, selectedText }) => {
   // 메시지 전송 핸들러
   const handleSendMessage = async (userMessage: string) => {
     // 1. 사용자 메시지 추가
-    const newUserMessage: ChatMessage = {
+    const newUserMessage: Message = {
       role: 'user',
       content: userMessage,
       timestamp: new Date().toISOString()
@@ -51,16 +59,15 @@ const ChatBot: React.FC<ChatBotProps> = ({ bookInfo, selectedText }) => {
     setIsLoading(true);
 
     try {
-      // 3. AI 응답 요청
+      // 3. AI 응답 요청 (config 전달)
       const aiResponse = await sendChatMessage(
         userMessage,
-        bookInfo,
-        selectedText,
+        config,  // ← bookInfo 대신 config 전달
         messages // 이전 대화 히스토리 전달
       );
 
       // 4. AI 응답 추가
-      const newAiMessage: ChatMessage = {
+      const newAiMessage: Message = {
         role: 'assistant',
         content: aiResponse,
         timestamp: new Date().toISOString()
@@ -70,7 +77,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ bookInfo, selectedText }) => {
       console.error('메시지 전송 실패:', error);
       
       // 에러 메시지 표시
-      const errorMessage: ChatMessage = {
+      const errorMessage: Message = {
         role: 'assistant',
         content: '죄송해요, 응답을 생성하는 중에 오류가 발생했어요. 다시 시도해주세요.',
         timestamp: new Date().toISOString()
@@ -84,18 +91,13 @@ const ChatBot: React.FC<ChatBotProps> = ({ bookInfo, selectedText }) => {
 
   return (
     <div className="flex flex-col h-full bg-white rounded-lg overflow-hidden">
-      {/* 헤더 */}
-      <BookInfoHeader
-        bookTitle={bookInfo.title}
-        author={bookInfo.author}
-        currentPage={bookInfo.currentPage}
-        currentChapter={bookInfo.currentChapter}
-      />
+      {/* 헤더 - config에 맞게 전달 */}
+      <BookInfoHeader config={config} />
 
-      {/* 퀵 액션 버튼 */}
+      {/* 퀵 액션 버튼 - config에 맞게 전달 */}
       <QuickActions 
         onQuickMessage={handleSendMessage}
-        bookTitle={bookInfo.title}
+        config={config}
       />
 
       {/* 메시지 영역 */}

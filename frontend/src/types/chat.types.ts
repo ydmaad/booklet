@@ -15,4 +15,5 @@ export interface ChatConfig {
 export interface Message {
   role: 'user' | 'assistant';
   content: string;
+  timestamp?: string;
 }
