@@ -29,7 +29,7 @@ const ReviewEdit = () => {
         .eq('id', id)
         .single();
 
-      console.log(data);
+      // console.log(data);
       if (data) {
         setReview(data);
         setStatus(data.status);

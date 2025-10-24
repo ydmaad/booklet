@@ -7,15 +7,13 @@ dotenv.config();
 // console.log('TTB_KEY:', process.env.TTB_KEY ? '✅ 있음' : '❌ 없음');
 // console.log('---');
 
-
 import express from 'express';
 import cors from 'cors';
 import axios from 'axios';
 import type { Request, Response } from 'express';
-import OpenAI from 'openai';
+import { OpenAI } from 'openai';
 import { createClient } from '@supabase/supabase-js';
-import chatRouter from "./routes/chat.js";
-
+import chatRouter from './routes/chat.js';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -37,7 +35,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // 👇 채팅 라우트 추가!
-app.use("/api/chat", chatRouter);
+app.use('/api/chat', chatRouter);
 
 // 베스트 셀러 리스트 API
 app.get('/api/books/list', async (req: Request, res: Response) => {
@@ -99,62 +97,92 @@ app.get('/api/books/isbn/:isbn', async (req: Request, res: Response) => {
   }
 });
 
+// 읽은 책 기반 or 신규 유저용 ai 책 추천
 app.post('/api/books/recommend', async (req: Request, res: Response) => {
   try {
     const { userId } = req.body;
 
     const { data: books, error } = await supabase
       .from('book_reviews')
-      .select('title, author, stars,memo')
+      .select('title, author, stars, memo')
       .eq('user_id', userId);
 
     if (error) throw error;
 
-    if (!books || books.length === 0) {
-      return res.json({ message: '읽은 책이 없어서 추천할 수 없습니다.' });
+    let prompt: string;
+    let systemMessage: string;
+
+    if (books && books.length > 0) {
+      const bookList = books
+        .map(
+          (book) => `- ${book.title} (${book.author}) - 별점: ${book.stars}/5`
+        )
+        .join('\n');
+
+      systemMessage =
+        '당신은 책 추천 전문가입니다. 사용자의 독서 취향을 분석해서 적절한 책을 추천해주세요.';
+
+      prompt = `사용자가 읽은 책 목록:
+${bookList}
+
+위 책들을 기반으로 사용자가 좋아할 만한 한국 도서 5권을 추천해주세요.
+
+**중요**: 반드시 아래 형식만 사용하세요. 링크, URL, 설명 절대 금지!
+
+형식:
+1. 책제목 - 저자명
+2. 책제목 - 저자명
+3. 책제목 - 저자명
+4. 책제목 - 저자명
+5. 책제목 - 저자명`;
+    } else {
+      systemMessage =
+        '당신은 책 추천 전문가입니다. 독서를 시작하는 사람들에게 폭넓게 읽힐 수 있는 양질의 책을 추천해주세요.';
+
+      prompt = `독서를 처음 시작하는 신규 사용자를 위해 다양한 장르의 한국 도서 5권을 추천해주세요.
+조건:
+- 대중적으로 인정받은 책
+- 읽기 쉬운 책
+- 다양한 장르 포함 (소설, 에세이, 자기계발 등)
+
+**중요**: 반드시 아래 형식만 사용하세요. 링크, URL, 설명 절대 금지!
+
+형식:
+1. 책제목 - 저자명
+2. 책제목 - 저자명
+3. 책제목 - 저자명
+4. 책제목 - 저자명
+5. 책제목 - 저자명`;
     }
-
-    const bookList = books
-      .map((book) => `- ${book.title} (${book.author}) - 별점: ${book.stars}/5`)
-      .join('\n');
-
-    const prompt = `사용자가 읽은 책 목록:
-      ${bookList}
-      
-      위 책들을 기반으로 사용자가 좋아할 만한 한국 도서 5권을 추천해주세요.
-      반드시 아래 형식으로만 답변해주세요. 링크나 설명 없이 오직 이 형식만 사용하세요:
-      
-      1. 책제목 - 저자명
-      2. 책제목 - 저자명
-      3. 책제목 - 저자명
-      4. 책제목 - 저자명
-      5. 책제목 - 저자명`;
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
-          content:
-            '당신은 책 추천 전문가입니다. 사용자의 취향을 분석해서 적절한 책을 추천해주세요.',
+          content: systemMessage,
         },
         {
           role: 'user',
           content: prompt,
         },
       ],
-      temperature: 0.7,
+      temperature: 0.6,
     });
 
     const aiResponse = completion.choices[0]?.message.content;
 
+    const cleanResponse = aiResponse?.replace(/\[.*?\]\(.*?\)/g, '');
+
     const bookTitles =
-      aiResponse?.match(/\d+\.\s*(.+?)\s*-/g)?.map((line) =>
+      cleanResponse?.match(/\d+\.\s*(.+?)\s*-/g)?.map((line) =>
         line
           .replace(/\d+\.\s*/, '')
           .replace(/\s*-.*$/, '')
           .trim()
       ) || [];
+
+    console.log('AI 응답:', cleanResponse);
 
     const bookDetails = await Promise.all(
       bookTitles.map(async (title) => {
@@ -185,12 +213,16 @@ app.post('/api/books/recommend', async (req: Request, res: Response) => {
     const recommendations = bookDetails.filter((book) => book !== null);
 
     res.json({
-      message: 'AI 책 추천 성공!',
+      message:
+        books && books.length > 0
+          ? 'AI 맞춤 추천 성공!'
+          : '신규 회원을 위한 추천 도서입니다!',
+      isNewUser: !books || books.length === 0,
       recommendations,
     });
   } catch (err) {
     console.error('ai 추천 에러', err);
-    res.status(500).json({ err: '책 추천에 실패했습니다.' });
+    res.status(500).json({ error: '책 추천에 실패했습니다.' });
   }
 });
 

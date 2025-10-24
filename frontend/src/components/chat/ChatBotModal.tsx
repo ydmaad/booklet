@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import ChatBot from './ChatBot';
-import type { BookInfo } from '../../lib/chatApi';
+import type { ChatConfig } from '../../types/chat.types';
 
 interface ChatBotModalProps {
   onClose: () => void;
-  bookInfo: BookInfo;
-  selectedText?: string;
+  config: ChatConfig;  // ← bookInfo에서 config로 변경!
 }
 
-const ChatBotModal: React.FC<ChatBotModalProps> = ({ onClose, bookInfo, selectedText }) => {
+const ChatBotModal: React.FC<ChatBotModalProps> = ({ onClose, config }) => {
   // ESC 키로 닫기
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -37,7 +36,7 @@ const ChatBotModal: React.FC<ChatBotModalProps> = ({ onClose, bookInfo, selected
       />
 
       {/* 챗봇 모달 */}
-      <div className="fixed bottom-6 right-6 z-50 w-96 h-[600px] shadow-2xl rounded-lg overflow-hidden animate-slide-up">
+      <div className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] h-[500px] max-h-[calc(100vh-8rem)] shadow-2xl rounded-lg overflow-hidden animate-slide-up bg-white">
         {/* 닫기 버튼 */}
         <button
           onClick={onClose}
@@ -65,7 +64,7 @@ const ChatBotModal: React.FC<ChatBotModalProps> = ({ onClose, bookInfo, selected
 
         {/* ChatBot 컴포넌트 */}
         <div className="h-full">
-          <ChatBot bookInfo={bookInfo} selectedText={selectedText} />
+          <ChatBot config={config} />  {/* ← config 전달! */}
         </div>
       </div>
 

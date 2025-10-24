@@ -1,24 +1,13 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import { getChatResponse, limitConversationHistory } from '../services/chatService.js';
+import type { ChatConfig, ChatMessage } from '../types/chat.types.js';
 
 const router = express.Router();
 
-interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
 interface ChatRequestBody {
   message: string;
-  bookInfo: {
-    title: string;
-    author: string;
-    genre?: string;
-    currentPage?: number;
-    currentChapter?: string;
-  };
-  selectedText?: string;
+  config: ChatConfig;  
   conversationHistory?: ChatMessage[];
 }
 
@@ -28,13 +17,22 @@ interface ChatRequestBody {
  */
 router.post('/', async (req: Request<{}, {}, ChatRequestBody>, res: Response) => {
   try {
-    const { message, bookInfo, selectedText, conversationHistory = [] } = req.body;
+    const { message, config, conversationHistory = [] } = req.body;
 
     // 요청 검증
-    if (!message || !bookInfo || !bookInfo.title || !bookInfo.author) {
+    if (!message || !config || !config.context) {
       return res.status(400).json({ 
-        error: '메시지와 책 정보(제목, 저자)는 필수입니다.' 
+        error: '메시지와 컨텍스트는 필수입니다.' 
       });
+    }
+
+    // book-discussion 모드일 때 책 정보 검증
+    if (config.context === 'book-discussion') {
+      if (!config.bookData || !config.bookData.title || !config.bookData.author) {
+        return res.status(400).json({ 
+          error: '책 토론 모드에서는 책 정보(제목, 저자)가 필수입니다.' 
+        });
+      }
     }
 
     // 대화 히스토리 제한 (최근 10개만)
@@ -43,8 +41,7 @@ router.post('/', async (req: Request<{}, {}, ChatRequestBody>, res: Response) =>
     // AI 응답 생성
     const aiResponse = await getChatResponse(
       message,
-      bookInfo,
-      selectedText,
+      config,  // ← config 전달
       limitedHistory
     );
 
