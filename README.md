@@ -6,6 +6,56 @@
 
 ---
 
+## 👥 Member
+
+<div align="center">
+
+<br>
+
+<table>
+  <thead>
+    <tr align="center">
+      <th>양민애</th>
+      <th>문소정</th>
+      <th>류향숙</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr align="center">
+      <td>
+        <a href="https://github.com/ydmaad">
+          <img src="https://github.com/ydmaad.png" alt="양민애 GitHub 프로필" width="140px"  />
+        </a>
+      </td>
+      <td>
+        <a href="https://github.com/thwjd639">
+          <img src="https://github.com/thwjd639.png" alt="문소정 GitHub 프로필" width="140px"  />
+        </a>
+      </td>
+      <td>
+        <a href="https://github.com/shootingstarhaha">
+          <img src="https://github.com/shootingstarhaha.png" alt="류향숙 GitHub 프로필" width="140px" />
+        </a>
+      </td>
+    </tr>
+    <tr align="center">
+      <td>
+          <img src="" alt="" />
+      </td>
+      <td>
+          <img src="" alt="" />
+      </td>
+      <td>
+          <img src="" alt="" />
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+
+</div>
+
+
 ## 📖 프로젝트 소개 (Overview)
 
 **별책부록(Booklet)**은 독서 기록을 쉽게 쌓고,
