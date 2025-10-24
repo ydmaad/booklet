@@ -29,7 +29,9 @@ const Header = () => {
         {user ? (
           <div className="flex justify-center items-center">
             <span className="text-lg">
-              <span className="font-bold text-brand-button">{profile?.nickname}</span>
+              <span className="font-bold text-brand-button">
+                {profile?.nickname}
+              </span>
               <span className="text-black"> 님</span>
             </span>
             <Link to="/mypage" className="text-lg ml-5">
