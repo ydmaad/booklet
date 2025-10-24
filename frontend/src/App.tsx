@@ -1,4 +1,3 @@
-// frontend/src/App.tsx
 import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -51,6 +50,18 @@ function App() {
     //     }
     //   };
     // }
+
+    // 🎬 데모: 리뷰 페이지에서는 책 토론 모드
+    if (path.includes('/review/')) {
+      return {
+        context: 'book-discussion',
+        bookData: {
+          title: '데미안',  // 데모용 고정 데이터
+          author: '헤르만 헤세',
+          isbn13: '9788937460449'
+        }
+      };
+    }
 
     // 기본: 사이트 가이드 모드
     return {
