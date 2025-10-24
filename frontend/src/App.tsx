@@ -1,8 +1,10 @@
+// frontend/src/App.tsx
 import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkSession } from './store/slices/authSlice';
 import type { AppDispatch, RootState } from './store/store';
+import type { ChatConfig } from './types/chat.types';
 
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -27,23 +29,36 @@ function App() {
   const location = useLocation();
   const [isChatOpen, setIsChatOpen] = useState(false);
 
-  // 앱 시작 시 세션 확인 (새로고침 대응)
-  // Redux Persist가 이미 상태를 복원했지만,
-  // Supabase 세션이 유효한지 백그라운드에서 확인
   useEffect(() => {
     dispatch(checkSession());
   }, [dispatch]);
 
-  // 페이지별 책 정보 결정
-  const getBookInfo = () => {
-    // 리뷰 상세 페이지에서는 해당 책 정보를 사용
-    // 지금은 일반 독서 상담으로 설정
-    // TODO: 나중에 페이지별로 책 정보 전달
+  // 페이지별로 ChatConfig 결정
+  const getChatConfig = (): ChatConfig => {
+    const path = location.pathname;
+
+    // TODO: 리뷰 상세 페이지(/review/:id)에서는 해당 책 정보 사용
+    // 지금은 모든 페이지에서 site-guide 모드
+    
+    // 나중에 책 관련 페이지에서는:
+    // if (path.includes('/review/') || path.includes('/mypage')) {
+    //   return {
+    //     context: 'book-discussion',
+    //     bookData: {
+    //       title: '실제 책 제목',
+    //       author: '실제 저자',
+    //       isbn13: '실제 ISBN'
+    //     }
+    //   };
+    // }
+
+    // 기본: 사이트 가이드 모드
     return {
-      title: '독서 도우미',
-      author: '별책부록',
+      context: 'site-guide'
     };
   };
+
+  const chatConfig = getChatConfig();
 
   // 로그인/회원가입 페이지에서는 챗봇 숨기기
   const shouldShowChatBot = !location.pathname.includes('/login') && 
@@ -64,7 +79,7 @@ function App() {
             path="/recommend"
             element={user ? <RecommendPage /> : <Navigate to="/" />}
           />
-          <Route path="/barcode" element={<BarcodeScanPage />} />/
+          <Route path="/barcode" element={<BarcodeScanPage />} />
           <Route path="/isbn" element={<IsbnInputPage />} />
           <Route path="/my-review/:isbn" element={<ReviewCreatePage />} />
           <Route path="/review/:id" element={<ReviewDetail />} />
@@ -81,19 +96,18 @@ function App() {
       </div>
       <Footer />
 
-      {/* 👇 ChatBot: 모든 페이지에 표시 (로그인/회원가입 제외) */}
+      {/* ChatBot: 모든 페이지에 표시 (로그인/회원가입 제외) */}
       {shouldShowChatBot && (
         <>
           <FloatingChatButton onClick={() => setIsChatOpen(true)} />
           {isChatOpen && (
             <ChatBotModal
               onClose={() => setIsChatOpen(false)}
-              bookInfo={getBookInfo()}
+              config={chatConfig}  // ← config 전달!
             />
           )}
         </>
       )}
-
     </div>
   );
 }
