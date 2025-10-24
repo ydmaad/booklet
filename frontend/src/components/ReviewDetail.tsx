@@ -5,8 +5,9 @@ import { FiTrash2 } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import type { Review } from '../types/book.types';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../store/store';
+import { setCurrentBook } from '../store/slices/booksSlice';
 
 interface ReviewWithProfile extends Review {
   profiles: {
@@ -20,6 +21,7 @@ const ReviewDetail = () => {
   const [review, setReview] = useState<ReviewWithProfile | null>(null);
   const navigate = useNavigate();
   const currentUser = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchReview = async () => {
@@ -30,12 +32,25 @@ const ReviewDetail = () => {
         .single();
 
       if (error) console.error(error);
-      else setReview(data);
+      else {
+        setReview(data);
+      
+        // 📚 Redux에 현재 책 정보 저장!
+        dispatch(setCurrentBook({
+          title: data.title,
+          author: data.author,
+          pubDate: data.pubDate,
+          description: data.description || '',
+          isbn13: data.isbn13 || '',
+          cover: data.cover,
+          publisher: data.publisher
+        }));
+      }
 
       // console.log(data);
     };
     fetchReview();
-  }, [id]);
+  }, [id, dispatch]);
 
   const isAuthor = review?.user_id === currentUser?.id;
 
