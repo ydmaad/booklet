@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { BooksState } from "../../types/book.types";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { BooksState, Book } from "../../types/book.types";
 
 const initialState: BooksState = {
   items: {
@@ -10,6 +10,7 @@ const initialState: BooksState = {
   },
   loading: false,
   error: null,
+  currentBook: null,  // 추가!
 };
 
 const booksSlice = createSlice({
@@ -29,9 +30,17 @@ const booksSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    setCurrentBook: (state, action: PayloadAction<Book | null>) => {
+      state.currentBook = action.payload;
+    },
   },
 });
 
-export const { fetchBooksStart, fetchBooksSuccess, fetchBooksFailure } =
-  booksSlice.actions;
+export const { 
+  fetchBooksStart, 
+  fetchBooksSuccess, 
+  fetchBooksFailure, 
+  setCurrentBook
+} = booksSlice.actions;
+
 export default booksSlice.reducer;

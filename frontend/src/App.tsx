@@ -24,6 +24,7 @@ import ChatBotModal from './components/chat/ChatBotModal';
 function App() {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
+  const currentBook = useSelector((state: RootState) => state.books.currentBook);
 
   const location = useLocation();
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -36,29 +37,14 @@ function App() {
   const getChatConfig = (): ChatConfig => {
     const path = location.pathname;
 
-    // TODO: 리뷰 상세 페이지(/review/:id)에서는 해당 책 정보 사용
-    // 지금은 모든 페이지에서 site-guide 모드
-    
-    // 나중에 책 관련 페이지에서는:
-    // if (path.includes('/review/') || path.includes('/mypage')) {
-    //   return {
-    //     context: 'book-discussion',
-    //     bookData: {
-    //       title: '실제 책 제목',
-    //       author: '실제 저자',
-    //       isbn13: '실제 ISBN'
-    //     }
-    //   };
-    // }
-
-    // 🎬 데모: 리뷰 페이지에서는 책 토론 모드
-    if (path.includes('/review/')) {
+    // 리뷰 페이지 && Redux에 책 정보 있음
+    if (path.includes('/review/') && currentBook) {
       return {
         context: 'book-discussion',
         bookData: {
-          title: '데미안',  // 데모용 고정 데이터
-          author: '헤르만 헤세',
-          isbn13: '9788937460449'
+          title: currentBook.title,
+          author: currentBook.author,
+          isbn13: currentBook.isbn13
         }
       };
     }

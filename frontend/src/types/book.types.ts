@@ -19,6 +19,7 @@ export interface BooksState {
   items: AladinResponse;
   loading: boolean;
   error: string | null;
+  currentBook: Book | null; // 추가!
 }
 
 export interface Review {
