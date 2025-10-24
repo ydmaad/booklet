@@ -8,35 +8,12 @@
 
 ## 👥 Member
 
-<div align="center">
+|                                                    🐶 양민애                                                    |                                                      😸 문소정                                                      |                                                              🐰 류향숙                                                              |
+| :-------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------: |
+| [<img src="https://github.com/ydmaad.png" alt="양민애 GitHub 프로필" width="140px">](https://github.com/ydmaad) | [<img src="https://github.com/thwjd639.png" alt="문소정 GitHub 프로필" width="140px">](https://github.com/thwjd639) | [<img src="https://github.com/shootingstarhaha.png" alt="류향숙 GitHub 프로필" width="140px">](https://github.com/shootingstarhaha) |
+|         ![Frontend](https://img.shields.io/badge/Frontend-4A73BF?style=flat&logo=react&logoColor=white)         |     ![Data Science](https://img.shields.io/badge/Data%20Science-7C6FB2?style=flat&logo=python&logoColor=white)      |                                  ![Member](https://img.shields.io/badge/Member-BE8556?style=flat)                                   |
 
 <br>
-
-<table>
-  <thead>
-    <tr align="center">
-      <th>🐶 양민애</th>
-      <th>😸 문소정</th>
-      <th>🐰 류향숙</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr align="center">
-      <td>
-        ![Frontend](https://img.shields.io/badge/Frontend-green?style=for-the-badge&logo=react&logoColor=white)
-      </td>
-      <td>
-        ![Data Science](https://img.shields.io/badge/Data%20Science-blue?style=for-the-badge&logo=python&logoColor=white)
-      </td>
-      <td>
-        ![Member](https://img.shields.io/badge/Member-orange?style=for-the-badge)
-      </td>
-    </tr>
-  </tbody>
-</table>
-<br>
-
-</div>
 
 
 ## 📖 프로젝트 소개 (Overview)
